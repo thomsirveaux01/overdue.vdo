@@ -3382,6 +3382,122 @@
 			session.version = "31.2";
 			session.streamID = session.generateStreamID(); // randomly generates a streamID for this session. You can set your own programmatically if needed
 			
+			// Video defaults for this deployment: 1080p30 at 6 Mbps, locked.
+			session.quality = 0; // 1080p tier; keeps quality-driven paths consistent
+			session.width = 1920; // exact; known 1080p rigs
+			session.height = 1080; // exact
+			session.frameRate = 30; // exact
+			session.outboundVideoBitrate = 6000; // kbps; user-set, overrides the 1080p tier default of 4000
+			
+			// Single-purpose landing: open directly on the "Add your Camera to OBS" card.
+			// Bare page only; room/scene/director/stream/WHEP/webcam/auth URLs keep the normal landing.
+			(function () {
+				var url = new URLSearchParams(window.location.search);
+				var soloLanding =
+					!url.has("room") && !url.has("roomid") && !url.has("r") &&
+					!url.has("director") && !url.has("dir") &&
+					!url.has("scene") && !url.has("scn") &&
+					!url.has("solo") &&
+					!url.has("streamid") && !url.has("view") && !url.has("v") && !url.has("V") && !url.has("pull") &&
+					!url.has("whep") && !url.has("whepplay") &&
+					!url.has("webcam") && !url.has("wc") && !url.has("miconly") &&
+					!url.has("auth") && !url.has("requireauth");
+				if (!soloLanding) {
+					return;
+				}
+				// Encrypt the stream with a fresh random 16-character password unless the
+				// URL already provides one, so the OBS link below is private to this session.
+				if (!url.has("password") && !url.has("pass") && !url.has("pw") && !url.has("p")) {
+					session.password = (function (len) {
+						var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+						var out = "";
+						var i;
+						if (window.crypto && window.crypto.getRandomValues) {
+							var values = new Uint32Array(len);
+							window.crypto.getRandomValues(values);
+							for (i = 0; i < len; i++) {
+								out += chars.charAt(values[i] % chars.length);
+							}
+						} else {
+							for (i = 0; i < len; i++) {
+								out += chars.charAt(Math.floor(Math.random() * chars.length));
+							}
+						}
+						return out;
+					})(16);
+				}
+				document.addEventListener("DOMContentLoaded", function () {
+					var menu = getById("mainmenu");
+					if (!menu) {
+						return;
+					}
+					var cards = menu.querySelectorAll(".column.card");
+					for (var i = 0; i < cards.length; i++) {
+						if (cards[i].id !== "container-3") {
+							cards[i].classList.add("hidden");
+						}
+					}
+					getById("container-3").classList.add("skip-animation");
+					getById("container-3").classList.remove("pointer");
+					menu.style.opacity = 1; // show the card; main.js does this at startup too
+					getById("credits").style.zIndex = 21; // keep the ToS/Privacy footer above the full-screen card
+
+					// Show the OBS Browser Source URL (with the session password) at the top of the card.
+					var inner = getById("add_camera_inner");
+					if (!inner) {
+						return;
+					}
+					var obsURL = location.origin + location.pathname + "?V=" + session.streamID;
+					if (session.password) {
+						obsURL += "&password=" + session.password;
+					}
+
+					var box = document.createElement("div");
+					box.id = "obsUrlBox";
+					box.style.margin = "8px 0 16px 0";
+
+					var title = document.createElement("div");
+					title.className = "title";
+					title.title = "Add this URL to OBS Studio as a Browser Source";
+					var icon = document.createElement("i");
+					icon.className = "las la-key";
+					var label = document.createElement("span");
+					label.textContent = " OBS Browser Source URL";
+					title.appendChild(icon);
+					title.appendChild(label);
+					box.appendChild(title);
+
+					var row = document.createElement("div");
+					row.style.display = "flex";
+					row.style.alignItems = "center";
+
+					var input = document.createElement("input");
+					input.type = "text";
+					input.id = "obsUrlInput";
+					input.readOnly = true;
+					input.autocomplete = "off";
+					input.spellcheck = false;
+					input.value = obsURL;
+					input.style.flex = "1";
+					input.style.minWidth = "0";
+					input.style.fontFamily = "monospace";
+
+					var copyBtn = document.createElement("button");
+					copyBtn.id = "obsUrlCopy";
+					copyBtn.type = "button";
+					copyBtn.textContent = "Copy";
+					copyBtn.style.marginLeft = "8px";
+					copyBtn.onclick = function (evt) {
+						copyFunction(input, evt);
+					};
+
+					row.appendChild(input);
+					row.appendChild(copyBtn);
+					box.appendChild(row);
+					inner.insertBefore(box, inner.firstChild);
+				});
+			})();
+			
 			session.defaultPassword = "someEncryptionKey123"; // Change this password if self-deploying for added security/privacy
 			// session.salt = location.hostname; // used only if password is not == False. You can change to "session.salt = location.hostname+location.pathname;" for greater deployment isolation
 			

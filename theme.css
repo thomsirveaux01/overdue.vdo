@@ -1,0 +1,179 @@
+/* Deployment theme: the Bankee Doodle design language (dark, the default here).
+   Surface/text/accent tokens are copied from that app's style.css (hue 219).
+   Rules reuse VDO.Ninja's existing selectors and token names, so stock and
+   refresh rules pick up the palette automatically. Theme rules are scoped to
+   body.darktheme; the light theme is untouched. The app bars below are a
+   deployment addition shown only on the solo-landing view. Comma hsl() syntax
+   for Chrome 80 parse safety. */
+
+body.darktheme {
+	/* Surfaces: page, panels, raised */
+	--background-color: hsl(219, 34.2%, 14.2%);
+	--dark-background-color: hsl(219, 40%, 8%);
+	--discord-grey-1: hsl(219, 27.8%, 17.1%);
+	--discord-grey-3: hsl(219, 28.5%, 20.3%);
+	--discord-grey-5: hsl(219, 27.8%, 17.1%);
+	--discord-grey-6: hsl(219, 26%, 24%);
+	--discord-grey-7: hsl(219, 28.5%, 20.3%);
+	--discord-grey-8: hsl(219, 22%, 30%);
+	/* Text */
+	--discord-text: hsl(219, 19.6%, 92.5%);
+	--muted-icon: hsl(219, 18.9%, 66.4%);
+	/* Accent and links */
+	--accent-color: hsl(219, 99.5%, 65.4%);
+	--accent-hover-color: hsl(219, 99.5%, 72%);
+	--a-dark-link: hsl(219, 99.5%, 65.4%);
+	--a-dark-visited: hsl(219, 99.5%, 65.4%);
+	--a-dark-hover: hsl(219, 99.5%, 72%);
+	--a-dark-focus: hsl(219, 99.5%, 72%);
+	--a-dark-active: hsl(219, 99.5%, 58%);
+	--a-darker-link: hsl(219, 90%, 78%);
+	--a-darker-visited: hsl(219, 90%, 78%);
+	--a-darker-hover: hsl(219, 95%, 84%);
+	--a-darker-focus: hsl(219, 95%, 84%);
+	--a-darker-active: hsl(219, 90%, 72%);
+	/* Status */
+	--darktheme-red: #e5484d;
+	--darktheme-green: #2fbf71;
+	/* Shape */
+	--button-radius: 8px;
+	/* Flat page; drops the stock gradient overlay */
+	background-image: none;
+}
+
+/* Header: flat page background with a hairline bottom border, no glass */
+body.darktheme #header {
+	background-color: hsl(219, 34.2%, 14.2%) !important;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border-bottom: 1px solid hsl(219, 24.8%, 26.9%);
+}
+
+/* Landing cards: solid panel, hairline border, no hover lift; hover = accent border */
+body.darktheme .column.card,
+body.darktheme .column {
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	border-radius: 12px;
+	box-shadow: none;
+}
+body.darktheme .column:hover {
+	transform: none;
+	box-shadow: none;
+	border-color: rgba(79, 140, 255, 0.45);
+}
+
+/* Primary CTA: solid accent, no border, white label */
+body.darktheme .gotobutton,
+body.darktheme .chatBarInputButton {
+	border: none !important;
+	color: #fff !important;
+	font-weight: 600;
+}
+
+/* Fields: raised surface, hairline border, accent focus ring */
+body.darktheme input[type="text"],
+body.darktheme input[type="search"],
+body.darktheme input[type="number"],
+body.darktheme select,
+body.darktheme textarea {
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	background: hsl(219, 28.5%, 20.3%);
+	color: hsl(219, 19.6%, 92.5%);
+	border-radius: 8px;
+}
+body.darktheme input:focus,
+body.darktheme select:focus,
+body.darktheme textarea:focus {
+	outline: 2px solid hsl(219, 99.5%, 65.4%);
+	outline-offset: 0;
+	border-color: transparent;
+}
+
+/* Dropdown menus (director mix list): panel surface, hairline, soft shadow */
+body.darktheme .mix-dropdown {
+	background: hsl(219, 27.8%, 17.1%);
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	border-radius: 10px;
+	padding: 6px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+body.darktheme .mix-dropdown-header,
+body.darktheme .mix-dropdown-section-title {
+	color: hsl(219, 18.9%, 66.4%);
+	border-bottom-color: hsl(219, 24.8%, 26.9%);
+}
+body.darktheme .mix-dropdown-item {
+	color: hsl(219, 19.6%, 92.5%);
+	border-radius: 8px;
+}
+body.darktheme .mix-dropdown-item:hover {
+	background: rgba(79, 140, 255, 0.08);
+}
+
+/* Windows (modals, prompts, alerts): solid panel, hairline, soft shadow */
+body.darktheme .modal-content,
+body.darktheme .alertModalInner,
+body.darktheme .promptModalInner {
+	background-color: hsl(219, 27.8%, 17.1%) !important;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border: 1px solid hsl(219, 24.8%, 26.9%) !important;
+	border-radius: 12px !important;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Chat module: solid panel */
+body.darktheme #chatModule {
+	background-color: hsl(219, 27.8%, 17.1%) !important;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border: 1px solid hsl(219, 24.8%, 26.9%) !important;
+	border-radius: 12px !important;
+}
+body.darktheme .chat-header {
+	border-bottom-color: hsl(219, 24.8%, 26.9%);
+}
+
+/* Control bar: solid raised panel */
+body.darktheme #subControlButtons {
+	background-color: hsl(219, 28.5%, 20.3%);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Status cards: panel surface, no shadow */
+body.darktheme .message-card {
+	background-color: hsl(219, 27.8%, 17.1%);
+	box-shadow: none;
+}
+
+/* Tooltips: raised surface, hairline */
+body.darktheme .tooltip .tooltiptext {
+	background-color: hsl(219, 28.5%, 20.3%) !important;
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+}
+
+/* Text selection: accent tint */
+body.darktheme ::selection {
+	background-color: rgba(79, 140, 255, 0.4);
+}
+
+/* OBS Browser Source box (deployment addition): field + primary Copy button */
+body.darktheme #obsUrlBox input {
+	background: hsl(219, 28.5%, 20.3%);
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	border-radius: 8px;
+	color: hsl(219, 19.6%, 92.5%);
+}
+body.darktheme #obsUrlBox button {
+	background: hsl(219, 99.5%, 65.4%);
+	border: none;
+	border-radius: 8px;
+	color: #fff;
+	font-weight: 600;
+}

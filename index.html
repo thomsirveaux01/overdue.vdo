@@ -49,6 +49,7 @@
 		<meta name="msapplication-TileColor" content="#da532c" />
 		<meta name="theme-color" content="#0f131d" />
 		<link rel="stylesheet" href="./main.css?ver=4051" />
+		<link rel="stylesheet" href="./theme.css?ver=2" />
 		<script type="text/javascript" crossorigin="anonymous" src="./thirdparty/adapter.js"></script>
 		
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
@@ -3388,6 +3389,10 @@
 			session.height = 1080; // exact
 			session.frameRate = 30; // exact
 			session.outboundVideoBitrate = 6000; // kbps; user-set, overrides the 1080p tier default of 4000
+			
+			// Dark theme by default for this deployment (matches the studio's design language).
+			// ?lightmode still opts out; OBS keeps the stock light default.
+			session.darkmode = true;
 			
 			// Single-purpose landing: open directly on the "Add your Camera to OBS" card.
 			// Bare page only; room/scene/director/stream/WHEP/webcam/auth URLs keep the normal landing.

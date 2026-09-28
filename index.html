@@ -81,6 +81,11 @@
 
 	</head>
 	<body id="main" class="main hidden">
+		<div id="appTopBar">
+			<div id="appWordmark">Placeholder</div>
+			<div id="appTopIcon"><i class="las la-podcast" aria-hidden="true"></i></div>
+		</div>
+		<div id="appNavBar"><span id="appNavText">Placeholder</span></div>
 		<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
 			<link itemprop="url" href="./media/vdoNinja_logo_full.png" />
 		</span>
@@ -3445,7 +3450,11 @@
 					getById("container-3").classList.add("skip-animation");
 					getById("container-3").classList.remove("pointer");
 					menu.style.opacity = 1; // show the card; main.js does this at startup too
-					getById("credits").style.zIndex = 21; // keep the ToS/Privacy footer above the full-screen card
+					// The solo page is a normal scrolling document; the stock header and the
+					// fixed corner toolbar have no place in it (the OBS URL lives in the card).
+					getById("header").classList.add("hidden");
+					getById("miniTaskBar").classList.add("hidden");
+					document.body.classList.add("solo-landing"); // in-flow bars, card and footer (theme.css)
 
 					// Show the OBS Browser Source URL (with the session password) at the top of the card.
 					var inner = getById("add_camera_inner");

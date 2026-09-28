@@ -15,11 +15,6 @@
 			}
 		
 		</script>
-		<script>
-			if (new URLSearchParams(window.location.search).has('podcast')) {
-				document.write('<style>#directorlayout,#controlButtons{display:none!important}</style>');
-			}
-		</script>
 		<style>
 			html {
 				background-color: #0000;
@@ -3917,14 +3912,6 @@
 					showStartupError(error);
 				}
 			}, { once: true });
-			if (new URLSearchParams(window.location.search).has("podcast")) {
-				var podcastScript = document.createElement("script");
-				podcastScript.type = "module";
-				podcastScript.src = "./podcast/bootstrap.js?v=2";
-				podcastScript.onerror = function () { console.warn("Podcast studio could not load."); };
-				document.head.appendChild(podcastScript);
-			}
 		</script>
-		
 	</body>
 </html>

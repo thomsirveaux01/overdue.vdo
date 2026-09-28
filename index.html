@@ -3436,6 +3436,264 @@
 						return out;
 					})(16);
 				}
+				// Media status and controls for the solo stream, built as a body-level panel
+				// after the grid layout (below the card pre-Go, below the video post-Go).
+				// Plain English labels (no translation system): a deployment tool, like the OBS box.
+				function buildMediaPanel(inner) {
+					var panel = document.createElement("div");
+					panel.id = "mediaPanel";
+
+					var head = document.createElement("div");
+					head.id = "mediaPanelHead";
+					head.textContent = "Stream settings";
+					panel.appendChild(head);
+
+					var controls = document.createElement("div");
+					controls.id = "mediaPanelControls";
+
+					function makeField(label, field) {
+						var wrap = document.createElement("span");
+						wrap.className = "mediaField";
+						wrap.appendChild(document.createTextNode(label));
+						wrap.appendChild(field);
+						controls.appendChild(wrap);
+					}
+
+					var resSelect = document.createElement("select");
+					resSelect.id = "mediaResSelect";
+					var resolutions = [
+						["1920x1080", "1080p (1920 x 1080)"],
+						["1280x720", "720p (1280 x 720)"],
+						["640x360", "360p (640 x 360)"]
+					];
+					var i;
+					for (i = 0; i < resolutions.length; i++) {
+						var resOpt = document.createElement("option");
+						resOpt.value = resolutions[i][0];
+						resOpt.textContent = resolutions[i][1];
+						resSelect.appendChild(resOpt);
+					}
+					makeField("Resolution", resSelect);
+
+					var fpsSelect = document.createElement("select");
+					fpsSelect.id = "mediaFpsSelect";
+					var frameRates = ["30", "60", "24"];
+					for (i = 0; i < frameRates.length; i++) {
+						var fpsOpt = document.createElement("option");
+						fpsOpt.value = frameRates[i];
+						fpsOpt.textContent = frameRates[i];
+						fpsSelect.appendChild(fpsOpt);
+					}
+					makeField("Frames / second", fpsSelect);
+
+					var bitrateInput = document.createElement("input");
+					bitrateInput.type = "number";
+					bitrateInput.id = "mediaBitrateInput";
+					bitrateInput.min = "500";
+					bitrateInput.max = "20000";
+					bitrateInput.step = "100";
+					makeField("Target bitrate (kbps)", bitrateInput);
+
+					var applyButton = document.createElement("button");
+					applyButton.type = "button";
+					applyButton.id = "mediaApplyButton";
+					applyButton.textContent = "Apply";
+					controls.appendChild(applyButton);
+
+					panel.appendChild(controls);
+
+					var status = document.createElement("div");
+					status.id = "mediaPanelStatus";
+					var rows = [
+						["Target", "mediaTargetLine"],
+						["Now", "mediaActualLine"],
+						["Encoder", "mediaEncoderLine"],
+						["Browser", "mediaBrowserLine"]
+					];
+					for (i = 0; i < rows.length; i++) {
+						var row = document.createElement("div");
+						row.className = "mediaStatRow";
+						var label = document.createElement("span");
+						label.className = "mediaStatLabel";
+						label.textContent = rows[i][0];
+						var value = document.createElement("span");
+						value.id = rows[i][1];
+						value.textContent = "\u2014";
+						row.appendChild(label);
+						row.appendChild(value);
+						status.appendChild(row);
+					}
+					panel.appendChild(status);
+
+					var hint = document.createElement("div");
+					hint.id = "mediaLimitHint";
+					hint.className = "hidden";
+					panel.appendChild(hint);
+
+					// Body-level, right after the grid layout: the stock Go flow removes the
+					// landing #mainmenu (updateReshareLink), so a card-embedded panel would
+					// die with it. Here the panel sits below the card pre-Go and below the
+					// live video tile post-Go.
+					var grid = getById("gridlayout");
+					if (grid && grid.parentNode) {
+						grid.parentNode.insertBefore(panel, grid.nextSibling);
+					} else {
+						inner.appendChild(panel);
+					}
+
+					// The ToS/Privacy footer is inside #mainmenu, so the stock Go flow would
+					// take it with the cards. Reparent it below the panel: in-flow pre-Go
+					// and still there post-Go.
+					var credits = getById("credits");
+					if (credits && credits.parentNode) {
+						credits.parentNode.removeChild(credits);
+						panel.parentNode.insertBefore(credits, panel.nextSibling);
+					}
+
+					// Start the fields from the configured defaults.
+					function setSelectValue(select, value, label) {
+						for (var j = 0; j < select.options.length; j++) {
+							if (select.options[j].value === value) {
+								select.selectedIndex = j;
+								return;
+							}
+						}
+						var option = document.createElement("option");
+						option.value = value;
+						option.textContent = label;
+						select.appendChild(option);
+						select.selectedIndex = select.options.length - 1;
+					}
+					if (session.width && session.height) {
+						setSelectValue(resSelect, session.width + "x" + session.height, session.width + " x " + session.height);
+					}
+					if (session.frameRate) {
+						setSelectValue(fpsSelect, "" + session.frameRate, session.frameRate + " fps");
+					}
+					bitrateInput.value = session.outboundVideoBitrate || 6000;
+
+					var targetLine = getById("mediaTargetLine");
+					var actualLine = getById("mediaActualLine");
+					var encoderLine = getById("mediaEncoderLine");
+					var browserLine = getById("mediaBrowserLine");
+					var chromeVersion = getChromiumVersion();
+					browserLine.textContent = chromeVersion ? "Chrome " + chromeVersion : "Other browser";
+
+					// Apply the selected settings: stored on session (picked up by the next
+					// capture and new peers) and pushed live to the local track and any
+					// connected peer. webrtc.js bandwidth control enforces the cap.
+					applyButton.onclick = function () {
+						var width = parseInt(resSelect.value.split("x")[0], 10);
+						var height = parseInt(resSelect.value.split("x")[1], 10);
+						var frameRate = parseInt(fpsSelect.value, 10);
+						var kbps = parseInt(bitrateInput.value, 10);
+						if (!width || !height || !frameRate || !kbps) {
+							return;
+						}
+						session.width = width;
+						session.height = height;
+						session.frameRate = frameRate;
+						session.outboundVideoBitrate = kbps;
+
+						try {
+							if (session.streamSrc) {
+								var tracks = session.streamSrc.getVideoTracks();
+								if (tracks && tracks.length) {
+									tracks[0].applyConstraints({
+										width: { exact: width },
+										height: { exact: height },
+										frameRate: { exact: frameRate }
+									}).catch(function (e) {
+										warnlog(e);
+									});
+								}
+							}
+						} catch (e) {
+							warnlog(e);
+						}
+
+						for (var uuid in session.pcs) {
+							if (!session.pcs.hasOwnProperty(uuid)) {
+								continue;
+							}
+							if (uuid.indexOf("_screen") > -1) {
+								continue;
+							}
+							var pc = session.pcs[uuid];
+							if (!pc || !pc.stats) {
+								continue;
+							}
+							pc.setBitrate = kbps;
+							if (session.limitBitrate) {
+								session.limitBitrate(uuid, kbps);
+							}
+						}
+					};
+
+					// Refresh the status lines once a second; touch the DOM only on change.
+					var last = {};
+					setInterval(function () {
+						var target = session.width + " x " + session.height + " \u00b7 " + session.frameRate + " fps \u00b7 " + session.outboundVideoBitrate + " kbps";
+						if (last.target !== target) {
+							last.target = target;
+							targetLine.textContent = target;
+						}
+
+						var peer = false;
+						for (var uuid in session.pcs) {
+							if (!session.pcs.hasOwnProperty(uuid)) {
+								continue;
+							}
+							if (uuid.indexOf("_screen") > -1) {
+								continue;
+							}
+							if (session.pcs[uuid].stats) {
+								peer = session.pcs[uuid];
+								break;
+							}
+						}
+
+						var actual;
+						var encoder;
+						if (peer && peer.stats) {
+							var s = peer.stats;
+							actual = s.resolution || "\u2014";
+							if (s.video_bitrate_kbps) {
+								actual += " \u00b7 " + s.video_bitrate_kbps + " kbps";
+							}
+							if (s.video_encoder) {
+								encoder = s.video_encoder + (s._hardwareEncoder ? " (hardware)" : "");
+							} else {
+								encoder = "unknown"; // encoder stats are Chromium-only
+							}
+						} else {
+							actual = "\u2014";
+							encoder = "\u2014";
+						}
+						if (last.actual !== actual) {
+							last.actual = actual;
+							actualLine.textContent = actual;
+						}
+						if (last.encoder !== encoder) {
+							last.encoder = encoder;
+							encoderLine.textContent = encoder;
+						}
+
+						var reason = peer && peer.stats ? peer.stats.quality_limitation_reason : false;
+						var hintOn = reason && reason !== "none";
+						var hintText = hintOn ? "Quality is being limited: " + reason : "";
+						if (last.hintText !== hintText) {
+							last.hintText = hintText;
+							hint.textContent = hintText;
+							if (hintOn) {
+								hint.classList.remove("hidden");
+							} else {
+								hint.classList.add("hidden");
+							}
+						}
+					}, 1000);
+				}
+
 				document.addEventListener("DOMContentLoaded", function () {
 					var menu = getById("mainmenu");
 					if (!menu) {
@@ -3509,6 +3767,8 @@
 					row.appendChild(copyBtn);
 					box.appendChild(row);
 					inner.insertBefore(box, inner.firstChild);
+
+					buildMediaPanel(inner);
 				});
 			})();
 			

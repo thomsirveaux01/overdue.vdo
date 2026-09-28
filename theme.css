@@ -7,15 +7,17 @@
    for Chrome 80 parse safety. */
 
 body.darktheme {
-	/* Surfaces: page, panels, raised */
+	/* Surfaces: page, panels, raised. VDO's 8-step Discord grey scale folds onto
+	   Bankee's 4-surface scale by role: card/inner (grey-7 "primary") = --panel,
+	   raised fields (grey-6) = --panel2, borders (grey-8) = --line. */
 	--background-color: hsl(219, 34.2%, 14.2%);
-	--dark-background-color: hsl(219, 40%, 8%);
+	--dark-background-color: hsl(219, 34.2%, 14.2%);
 	--discord-grey-1: hsl(219, 27.8%, 17.1%);
-	--discord-grey-3: hsl(219, 28.5%, 20.3%);
+	--discord-grey-3: hsl(219, 27.8%, 17.1%);
 	--discord-grey-5: hsl(219, 27.8%, 17.1%);
-	--discord-grey-6: hsl(219, 26%, 24%);
-	--discord-grey-7: hsl(219, 28.5%, 20.3%);
-	--discord-grey-8: hsl(219, 22%, 30%);
+	--discord-grey-6: hsl(219, 28.5%, 20.3%);
+	--discord-grey-7: hsl(219, 27.8%, 17.1%);
+	--discord-grey-8: hsl(219, 24.8%, 26.9%);
 	/* Text */
 	--discord-text: hsl(219, 19.6%, 92.5%);
 	--muted-icon: hsl(219, 18.9%, 66.4%);
@@ -64,12 +66,37 @@ body.darktheme .column:hover {
 	border-color: rgba(79, 140, 255, 0.45);
 }
 
-/* Primary CTA: solid accent, no border, white label */
-body.darktheme .gotobutton,
+/* Primary CTA: solid accent, no border, white label (Bankee .btn) */
+body.darktheme .gobutton,
 body.darktheme .chatBarInputButton {
 	border: none !important;
 	color: #fff !important;
 	font-weight: 600;
+}
+/* The camera card's Go button is .gowebcam (stock gray/green); make it the
+   Bankee primary button. */
+body.darktheme #gowebcam,
+body.darktheme #gowebcam:enabled {
+	background: hsl(219, 99.5%, 65.4%) !important;
+	border: none !important;
+	border-radius: 8px;
+	color: #fff !important;
+	font-weight: 600;
+}
+body.darktheme #gowebcam:hover:enabled {
+	filter: brightness(1.1);
+	box-shadow: none;
+}
+body.darktheme #gowebcam:disabled {
+	opacity: 0.45;
+}
+/* Footer links: the stock slate literal predates the theme; links read in accent */
+body.darktheme .footer > a,
+body.darktheme .footer > a:visited {
+	color: hsl(219, 99.5%, 65.4%);
+}
+body.darktheme .footer > a:hover {
+	color: hsl(219, 99.5%, 72%);
 }
 
 /* Fields: raised surface, hairline border, accent focus ring */
@@ -178,13 +205,117 @@ body.darktheme #obsUrlBox button {
 	font-weight: 600;
 }
 
+/* Light page (?lightmode / ?whitemode): the light Bankee palette (hue 221,
+   blue-toned, no pure white or gray). Stock light/white views keep the stock
+   palette; only the solo landing gets the Bankee look in both themes. */
+body.solo-landing:not(.darktheme) {
+	--background-color: hsl(221, 63.2%, 91.3%);
+	--lighttheme-1: hsl(221, 71.3%, 97.1%);
+	--lighttheme-2: hsl(221, 62.7%, 93.5%);
+	--lighttheme-3: hsl(221, 71.3%, 97.1%);
+	--lighttheme-4: hsl(221, 49.6%, 82.3%);
+	--lighttheme-5: hsl(221, 49.6%, 82.3%);
+	--lighttheme-6: hsl(221, 49.6%, 82.3%);
+	--lighttheme-7: hsl(221, 21.2%, 47%);
+	--lighttheme-8: hsl(221, 45%, 16.3%);
+	--lighttheme-text: hsl(221, 45%, 16.3%);
+	--accent-color: hsl(221, 82.9%, 53.2%);
+	--accent-hover-color: hsl(221, 82.9%, 58.5%);
+	--a-link: hsl(221, 82.9%, 53.2%);
+	--a-visited: hsl(221, 82.9%, 53.2%);
+	--a-hover: hsl(221, 82.9%, 48%);
+	--a-focus: hsl(221, 82.9%, 48%);
+	--a-active: hsl(221, 82.9%, 43%);
+	--a-lighter-link: hsl(221, 82.9%, 48%);
+	--a-lighter-visited: hsl(221, 82.9%, 48%);
+	--a-lighter-hover: hsl(221, 82.9%, 43%);
+	--a-lighter-focus: hsl(221, 82.9%, 43%);
+	--a-lighter-active: hsl(221, 82.9%, 38%);
+	--button-radius: 8px;
+}
+body.solo-landing:not(.darktheme) .footer > a,
+body.solo-landing:not(.darktheme) .footer > a:visited {
+	color: hsl(221, 82.9%, 53.2%);
+}
+body.solo-landing:not(.darktheme) .footer > a:hover {
+	color: hsl(221, 82.9%, 48%);
+}
+body.solo-landing:not(.darktheme) #gowebcam,
+body.solo-landing:not(.darktheme) #gowebcam:enabled {
+	background: hsl(221, 82.9%, 53.2%) !important;
+	border: none !important;
+	border-radius: 8px;
+	color: #fff !important;
+	font-weight: 600;
+}
+body.solo-landing:not(.darktheme) #obsUrlBox button {
+	background: hsl(221, 82.9%, 53.2%);
+	border: none;
+	border-radius: 8px;
+	color: #fff;
+	font-weight: 600;
+}
+
+/* ?whitemode: the stock whitetheme literals (pure white/gray) are not Bankee;
+   map them onto the light palette above. */
+body.solo-landing.whitetheme {
+	background-color: hsl(221, 63.2%, 91.3%);
+	color: hsl(221, 45%, 16.3%);
+}
+body.solo-landing.whitetheme .container-inner {
+	background-color: hsl(221, 71.3%, 97.1%);
+}
+body.solo-landing.whitetheme button {
+	background-color: hsl(221, 62.7%, 93.5%);
+	border: 1px solid hsl(221, 49.6%, 82.3%);
+	color: hsl(221, 45%, 16.3%);
+}
+body.solo-landing.whitetheme button:hover {
+	background-color: hsl(221, 63.2%, 91.3%);
+}
+body.solo-landing.whitetheme .card {
+	background-color: hsl(221, 71.3%, 97.1%);
+}
+body.solo-landing.whitetheme .infoblob {
+	color: hsl(221, 21.2%, 47%);
+}
+body.solo-landing.whitetheme select,
+body.solo-landing.whitetheme input[type="text"],
+body.solo-landing.whitetheme input[type="password"] {
+	background-color: hsl(221, 62.7%, 93.5%);
+	border: 1px solid hsl(221, 49.6%, 82.3%);
+	color: hsl(221, 45%, 16.3%);
+}
+body.solo-landing.whitetheme #addPasswordBasic,
+body.solo-landing.whitetheme #avatarDiv,
+body.solo-landing.whitetheme #avatarDiv2,
+body.solo-landing.whitetheme #avatarDiv3,
+body.solo-landing.whitetheme #audioScreenShare1,
+body.solo-landing.whitetheme #audioMenu,
+body.solo-landing.whitetheme #audioMenu2,
+body.solo-landing.whitetheme #effectsDiv,
+body.solo-landing.whitetheme #effectsDiv2,
+body.solo-landing.whitetheme #effectsDiv3,
+body.solo-landing.whitetheme #grabDirectorSoloLinkParent,
+body.solo-landing.whitetheme #videoMenu,
+body.solo-landing.whitetheme #videoMenu2,
+body.solo-landing.whitetheme #videoMenu3,
+body.solo-landing.whitetheme #headphonesDiv,
+body.solo-landing.whitetheme #headphonesDiv2,
+body.solo-landing.whitetheme #headphonesDiv3,
+body.solo-landing.whitetheme #videoSettings,
+body.solo-landing.whitetheme #videoSettings2,
+body.solo-landing.whitetheme #popupSelector_user_settings,
+body.solo-landing.whitetheme .invite_setting_group {
+	background-color: hsl(221, 71.3%, 97.1%);
+	border: 1px solid hsl(221, 49.6%, 82.3%);
+}
+
 /* Solo-landing layout (deployment addition): the Bankee Doodle look. Two in-flow
    bars above a centered 1000px column; the camera card sits on the page background;
    the ToS/Privacy line is the in-flow centered footer. Every rule is scoped to
-   body.solo-landing, so stock views are untouched. The page background is dark in
-   both stock themes, so the bars default to the dark palette; body.whitetheme
-   (opt-in white page) gets the light palette. No flex gap (Chrome 84+), margins
-   instead. Comma hsl() syntax for Chrome 80 parse safety. */
+   body.solo-landing, so stock views are untouched. No flex gap (Chrome 84+),
+   margins instead. Comma hsl() syntax for Chrome 80 parse safety. */
 
 /* The bars are deployment additions: hidden in every view except the solo landing */
 #appTopBar,
@@ -202,17 +333,20 @@ body.solo-landing {
 	display: block;
 }
 
-/* Bar 1: wordmark + 48px glyph circle on the page background (Bankee header) */
+/* Bar 1: wordmark + 40px glyph circle on the page background (Bankee header;
+   the 14px bottom padding + the navbar's 6px top margin = the 20px row gap) */
 body.solo-landing #appTopBar {
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
 	max-width: 1000px;
 	margin: 0 auto;
-	padding: 12px 20px 0;
+	padding: 12px 20px 14px;
 	color: hsl(219, 19.6%, 92.5%);
 }
+/* The Bankee wordmark is a deliberate system font (no web fonts) */
 body.solo-landing #appWordmark {
+	font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
 	font-size: 40px;
 	font-weight: 700;
 	line-height: 1;
@@ -222,11 +356,11 @@ body.solo-landing #appTopIcon {
 	align-items: center;
 	justify-content: center;
 	flex: none;
-	width: 48px;
-	height: 48px;
+	width: 40px;
+	height: 40px;
 	border-radius: 50%;
 	background-color: hsl(219, 18.9%, 66.4%);
-	color: hsl(219, 28.5%, 20.3%);
+	color: hsl(219, 27.8%, 17.1%);
 }
 body.solo-landing #appTopIcon .las {
 	font-size: 24px;
@@ -248,15 +382,16 @@ body.solo-landing #appNavBar > span + span {
 	margin-left: 14px;
 }
 
-/* Whitetheme (opt-in white page): light Bankee palette for the bars */
-body.whitetheme.solo-landing #appTopBar {
-	color: #111;
+/* Light page (?lightmode / ?whitemode): the light Bankee palette for the bars.
+   Scoped to the solo page; stock light/white views keep the stock palette. */
+body.solo-landing:not(.darktheme) #appTopBar {
+	color: hsl(221, 45%, 16.3%);
 }
-body.whitetheme.solo-landing #appTopIcon {
+body.solo-landing:not(.darktheme) #appTopIcon {
 	background-color: hsl(221, 21.2%, 47%);
 	color: hsl(221, 71.3%, 97.1%);
 }
-body.whitetheme.solo-landing #appNavBar {
+body.solo-landing:not(.darktheme) #appNavBar {
 	background-color: hsl(221, 71.3%, 97.1%);
 	border-color: hsl(221, 49.6%, 82.3%);
 	color: hsl(221, 21.2%, 47%);
@@ -334,7 +469,7 @@ body.solo-landing #gridlayout > .vidcon > video.tile {
    the stock Go flow, which removes the landing #mainmenu. Default palette is
    for the light stock card; the dark theme gets the dark one. */
 #mediaPanel {
-	background-color: hsl(221, 62.7%, 93.5%);
+	background-color: hsl(221, 71.3%, 97.1%);
 	border: 1px solid hsl(221, 49.6%, 82.3%);
 	border-radius: 12px;
 	padding: 14px 16px;
@@ -345,7 +480,7 @@ body.solo-landing #gridlayout > .vidcon > video.tile {
 	color: hsl(221, 45%, 16.3%);
 }
 body.darktheme #mediaPanel {
-	background-color: hsl(219, 28.5%, 20.3%);
+	background-color: hsl(219, 27.8%, 17.1%);
 	border-color: hsl(219, 24.8%, 26.9%);
 	color: hsl(219, 19.6%, 92.5%);
 }
@@ -374,7 +509,7 @@ body.darktheme .mediaField {
 	padding: 7px 10px;
 	border-radius: 8px;
 	border: 1px solid hsl(221, 49.6%, 82.3%);
-	background-color: #fff;
+	background-color: hsl(221, 62.7%, 93.5%);
 	color: hsl(221, 45%, 16.3%);
 	font-size: 14px;
 }

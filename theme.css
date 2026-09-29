@@ -113,7 +113,7 @@ body.darktheme textarea {
 body.darktheme input:focus,
 body.darktheme select:focus,
 body.darktheme textarea:focus {
-	outline: 2px solid hsl(219, 99.5%, 65.4%);
+	outline: 3px solid hsl(219, 99.5%, 65.4%);
 	outline-offset: 0;
 	border-color: transparent;
 }
@@ -422,7 +422,8 @@ body.solo-landing #navViewSwitch {
 body.solo-landing #navViewSwitch button {
 	display: inline-flex;
 	align-items: center;
-	padding: 8px 16px;
+	margin: 0;
+	padding: 8px 12px;
 	background-color: hsl(219, 28.5%, 20.3%);
 	border: 1px solid hsl(219, 24.8%, 26.9%);
 	border-radius: 8px;
@@ -434,7 +435,7 @@ body.solo-landing #navViewSwitch button {
 	cursor: pointer;
 }
 body.solo-landing #navViewSwitch button + button {
-	margin-left: 8px;
+	margin-left: 10px;
 }
 body.solo-landing #navViewSwitch button:hover {
 	background-color: hsl(219, 28.5%, 23%);
@@ -507,6 +508,7 @@ body.solo-landing #container-2.skip-animation {
 	left: auto;
 	z-index: auto;
 	margin: 0 0 20px !important;
+	padding: 20px;
 	border-radius: 12px !important;
 }
 
@@ -563,10 +565,10 @@ body.solo-landing #gridlayout > .vidcon > video.tile {
 	background-color: hsl(221, 71.3%, 97.1%);
 	border: 1px solid hsl(221, 49.6%, 82.3%);
 	border-radius: 12px;
-	padding: 14px 16px;
+	padding: 20px;
 	width: calc(100% - 40px);
 	max-width: 640px;
-	margin: 16px auto 24px;
+	margin: 20px auto;
 	text-align: left;
 	color: hsl(221, 45%, 16.3%);
 }
@@ -676,6 +678,15 @@ body.darktheme #mediaLimitHint {
    Scoped to the speedtest body / #mainapp so the solo landing and stock views are
    untouched. Comma hsl() syntax for Chrome 80 parse safety. */
 
+/* speedtest.html loads no main.css, so its page model is content-box by default;
+   restore the universal border-box so the shared-bar rules compute the same widths
+   as the solo landing. */
+body.speedtest-page *,
+body.speedtest-page *::before,
+body.speedtest-page *::after {
+	box-sizing: border-box;
+}
+
 body.speedtest-page {
 	--st-bg: hsl(219, 34.2%, 14.2%);
 	--st-panel: hsl(219, 27.8%, 17.1%);
@@ -711,6 +722,7 @@ body.speedtest-page:not(.darktheme) {
 
 #mainapp h1 {
 	color: var(--st-text);
+	margin: 0 0 14px;
 }
 #mainapp h2 {
 	color: var(--st-muted);
@@ -748,6 +760,9 @@ body.speedtest-page:not(.darktheme) {
 	background: var(--st-panel);
 	border: 1px solid var(--st-line);
 	border-radius: 12px;
+	padding: 20px;
+	margin: 20px auto;
+	max-width: none;
 }
 #mainapp .graph h2 {
 	color: var(--st-muted);

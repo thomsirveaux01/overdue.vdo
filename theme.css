@@ -413,8 +413,8 @@ body.solo-landing #appNavBar {
 	border-radius: 12px;
 	color: hsl(219, 18.9%, 66.4%);
 }
-/* View tabs: two distinct pill buttons with a gap. Each button has its own
-   panel2 bg, line border, and 8r; the active view and its glyph read in accent. */
+/* View tabs + speed test: distinct pill buttons with a gap. Each button has its
+   own panel2 bg, line border, and 8r; the active view and its glyph read in accent. */
 body.solo-landing #navViewSwitch {
 	display: inline-flex;
 	align-items: stretch;
@@ -666,4 +666,140 @@ body.darktheme #mediaLimitHint {
 		flex-wrap: wrap;
 		justify-content: center;
 	}
+}
+
+/* Speed test page (speedtest.html): it reuses the solo-landing chrome above (the
+   wordmark + view tabs) and gets the Bankee palette. speedtest.css ships its own
+   slate palette, so remap it onto the Bankee tokens here. The palette is defined
+   once per theme as --st-* vars (dark by default; light/white reuse the hue-221
+   light palette) so the content follows the page theme like the other pages.
+   Scoped to the speedtest body / #mainapp so the solo landing and stock views are
+   untouched. Comma hsl() syntax for Chrome 80 parse safety. */
+
+body.speedtest-page {
+	--st-bg: hsl(219, 34.2%, 14.2%);
+	--st-panel: hsl(219, 27.8%, 17.1%);
+	--st-panel2: hsl(219, 28.5%, 20.3%);
+	--st-panel2-h: hsl(219, 28.5%, 23%);
+	--st-line: hsl(219, 24.8%, 26.9%);
+	--st-text: hsl(219, 19.6%, 92.5%);
+	--st-muted: hsl(219, 18.9%, 66.4%);
+	--st-acc: hsl(219, 99.5%, 65.4%);
+	--st-acc-h: hsl(219, 99.5%, 72%);
+	--st-red: #e5484d;
+	background: var(--st-bg);
+	color: var(--st-text);
+}
+/* Light / white (?lightmode / ?whitemode): the hue-221 light palette, matching
+   the other pages. */
+body.speedtest-page:not(.darktheme) {
+	--st-bg: hsl(221, 63.2%, 91.3%);
+	--st-panel: hsl(221, 71.3%, 97.1%);
+	--st-panel2: hsl(221, 62.7%, 93.5%);
+	--st-panel2-h: hsl(221, 62.7%, 90%);
+	--st-line: hsl(221, 49.6%, 82.3%);
+	--st-text: hsl(221, 45%, 16.3%);
+	--st-muted: hsl(221, 21.2%, 47%);
+	--st-acc: hsl(221, 82.9%, 53.2%);
+	--st-acc-h: hsl(221, 82.9%, 48%);
+}
+
+/* Match the app's 1000px content column (the solo landing's card row). */
+#mainapp {
+	max-width: 1000px;
+}
+
+#mainapp h1 {
+	color: var(--st-text);
+}
+#mainapp h2 {
+	color: var(--st-muted);
+}
+#mainapp a {
+	color: var(--st-acc);
+}
+#mainapp a:hover {
+	color: var(--st-acc-h);
+}
+#mainapp button {
+	background-color: var(--st-panel2);
+	border: 1px solid var(--st-line);
+	border-radius: 8px;
+	color: var(--st-text);
+}
+#mainapp button:hover {
+	background-color: var(--st-panel2-h);
+	border-color: var(--st-line);
+}
+#mainapp button.active {
+	background-color: var(--st-acc);
+	border-color: var(--st-acc);
+	color: #fff;
+}
+#mainapp button.red {
+	background-color: var(--st-red);
+	border-color: var(--st-red);
+}
+
+/* The metric graphs, the log, and the how-to read as Bankee cards (panel + hairline + 12r). */
+#mainapp #graphs,
+#mainapp #log,
+#mainapp #explanation {
+	background: var(--st-panel);
+	border: 1px solid var(--st-line);
+	border-radius: 12px;
+}
+#mainapp .graph h2 {
+	color: var(--st-muted);
+}
+#mainapp .graph span {
+	color: var(--st-text);
+}
+#mainapp canvas {
+	background: var(--st-panel);
+	border: 1px solid var(--st-line);
+}
+#mainapp #feeds iframe {
+	border: 1px solid var(--st-line);
+	border-radius: 12px;
+}
+#mainapp #feeds h3 {
+	color: var(--st-muted);
+}
+#mainapp #log li {
+	color: var(--st-text);
+	border-bottom-color: var(--st-line);
+}
+#mainapp #log h2,
+#mainapp #explanation h2 {
+	color: var(--st-text);
+}
+#mainapp #explanation ol {
+	color: var(--st-muted);
+}
+#mainapp .guest-check {
+	color: var(--st-muted);
+}
+#mainapp code {
+	background: var(--st-panel2);
+	color: var(--st-acc);
+}
+#mainapp select {
+	background: var(--st-panel2);
+	color: var(--st-text);
+	border: 1px solid var(--st-line);
+	border-radius: 8px;
+}
+#mainapp #speedtest-legal-footer {
+	border-top-color: var(--st-line);
+	color: var(--st-muted);
+}
+#mainapp #speedtest-legal-footer a {
+	color: var(--st-acc);
+}
+#mainapp #speedtest-legal-footer a:hover {
+	color: var(--st-acc-h);
+}
+#mainapp #speedtest-legal-footer .divider {
+	color: var(--st-muted);
 }

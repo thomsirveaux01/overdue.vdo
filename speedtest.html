@@ -3,6 +3,7 @@
 	<head>
 		<link rel="stylesheet" href="./lineawesome/css/line-awesome.min.css" />
 		<link rel="stylesheet" href="./speedtest.css?ver=7" />
+		<link rel="stylesheet" href="./theme.css?ver=4" />
 		<meta charset="utf8" />
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 		<link id="favicon1" rel="icon" type="image/png" sizes="32x32" href="./media/favicon-32x32.png" />
@@ -37,7 +38,37 @@
 		<meta property="og:image:height" content="630">
 		<meta property="og:site_name" content="VDO.Ninja">
 	</head>
-	<body onload="applySpeedtestBranding(); loadIframe();">
+	<body class="solo-landing darktheme speedtest-page" onload="applySpeedtestBranding(); loadIframe();">
+		<!-- App chrome: the same wordmark + view tabs as the solo landing. Glyphs:
+			 Bootstrap Icons 1.13.1 (MIT, see thirdparty/bootstrap-icons-1.13.1.LICENSE). -->
+		<div id="appTopBar">
+			<div id="appWordmark"><span class="wm-emoji" aria-hidden="true">📚</span>VDOverdue<span class="wm-emoji" aria-hidden="true">📖</span></div>
+			<div id="appTopIcon"><i class="las la-podcast" aria-hidden="true"></i></div>
+		</div>
+		<div id="appNavBar">
+			<span id="navViewSwitch">
+				<button id="navWebcam" type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+						<path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z" />
+					</svg>
+					<span>Webcam</span>
+				</button>
+				<button id="navScreenShare" type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+						<path d="M3 3.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1 .5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+						<path d="M.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5zM1 5V2h14v3zm0 1h14v8H1z" />
+					</svg>
+					<span>Screen share</span>
+				</button>
+				<button id="navSpeedTest" type="button" class="active">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+						<path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2M3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.39.39 0 0 0-.029-.518z" />
+						<path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.95 11.95 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0" />
+					</svg>
+					<span>Speed test</span>
+				</button>
+			</span>
+		</div>
 		<div id="mainapp">
 		<h1 id="speedtest-title">
 			VDO.Ninja's video streaming quality test
@@ -131,6 +162,22 @@
 		
 
 		<script>
+		
+			// Apply the page theme from the URL (dark by default), mirroring main.js.
+			// Runs before paint and before loadIframe so the content and the embedded
+			// feeds all follow the same theme, like the other pages.
+			(function () {
+				var u = new URLSearchParams(window.location.search);
+				var b = document.body;
+				if (u.has("lightmode") || u.has("lighttheme")) {
+					b.classList.remove("darktheme");
+				} else if (u.has("whitemode") || u.has("whitetheme")) {
+					b.classList.remove("darktheme");
+					b.classList.add("whitetheme");
+				} else {
+					b.classList.add("darktheme"); // ?darkmode or the default
+				}
+			})();
 		
 			function getChromiumVersion() {
 				var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
@@ -315,6 +362,11 @@
 			function loadIframe(zone="") {
 				// this is pretty important if you want to avoid camera permission popup problems. YOu need to load the iFRAME after  you load the parent body. A quick solution is like: <body onload=>loadIframe();"> !!!
 
+				// The embedded feeds follow the page theme (the theme-detection block above
+				// set the body class before loadIframe ran).
+				var themeParam = document.body.classList.contains("whitetheme") ? "whitemode"
+					: document.body.classList.contains("darktheme") ? "darkmode" : "lightmode";
+
 				document.getElementById("container").innerHTML = "";
 
 				var streamID = "";
@@ -343,7 +395,7 @@
 				//iframe.allow = "autoplay";
 				var srcString =	"./?push=" + streamID + "&cleanish&privacy";
 				srcString = appendSpeedtestParams(srcString, speedtestPublisherParams);
-				srcString += "&"+testType+"&audiodevice=0&fullscreen&transparent&darkmode&remote&speedtest="+zone;
+				srcString += "&"+testType+"&audiodevice=0&fullscreen&transparent&"+themeParam+"&remote&speedtest="+zone;
 				
 				urlParams.getAll("turn").forEach(function (turnvalue) {
 					srcString = srcString + "&turn=" + encodeURIComponent(turnvalue);
@@ -387,7 +439,7 @@
 
 				iframe.allow = "autoplay";
 				// I've removed &privacy from the view link, and left it just on the push link. This hopefully solves compatibility issues
-				var srcString = "./?view=" + streamID + "&cleanish&noaudio&scale=0&speedtest="+zone; // No TURN servers set on the reciever. Don't want to query for TURN servers needlessly.
+				var srcString = "./?view=" + streamID + "&cleanish&noaudio&scale=0&"+themeParam+"&speedtest="+zone; // No TURN servers set on the reciever. Don't want to query for TURN servers needlessly.
 				srcString = appendSpeedtestParams(srcString, speedtestViewerParams);
 
 				urlParams.getAll("turn").forEach(function (turnvalue) {
@@ -704,6 +756,23 @@
 				// now clear the right-most pixels:
 				context.clearRect(width - 1, 0, 1, height);
 			}
+		
+			// View tabs: this is the speed test page, so that tab is active (set in the
+			// markup). The other two open their views in a new tab, like the solo landing.
+			(function () {
+				var navWebcam = document.getElementById("navWebcam");
+				var navScreenShare = document.getElementById("navScreenShare");
+				if (navWebcam) {
+					navWebcam.onclick = function () {
+						window.open("./", "_blank");
+					};
+				}
+				if (navScreenShare) {
+					navScreenShare.onclick = function () {
+						window.open("./?ss=1", "_blank");
+					};
+				}
+			})();
 		</script>
 	</body>
 </html>

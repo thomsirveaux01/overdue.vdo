@@ -344,12 +344,38 @@ body.solo-landing #appTopBar {
 	padding: 12px 20px 14px;
 	color: hsl(219, 19.6%, 92.5%);
 }
-/* The Bankee wordmark is a deliberate system font (no web fonts) */
+/* Goudy Old Style is self-hosted (fonts/) so the wordmark renders the same
+   face on every machine. Provenance/license: fonts/GoudyOldStyle.LICENSE.
+   The fallback stack below covers a failed font load. */
+@font-face {
+	font-family: "Goudy Old Style";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("fonts/goudy-old-style.ttf") format("truetype");
+}
+@font-face {
+	font-family: "Goudy Old Style";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("fonts/goudy-old-style-bold.ttf") format("truetype");
+}
 body.solo-landing #appWordmark {
-	font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
+	font-family: "Goudy Old Style", "Goudy Old Text", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
 	font-size: 40px;
 	font-weight: 700;
 	line-height: 1;
+}
+body.solo-landing #appWordmark .wm-emoji {
+	font-size: 40px;
+	line-height: 1;
+}
+body.solo-landing #appWordmark .wm-emoji:first-child {
+	margin-right: 10px;
+}
+body.solo-landing #appWordmark .wm-emoji:last-child {
+	margin-left: 10px;
 }
 body.solo-landing #appTopIcon {
 	display: flex;

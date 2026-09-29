@@ -80,7 +80,26 @@
 			<div id="appWordmark"><span class="wm-emoji" aria-hidden="true">📚</span>VDOverdue<span class="wm-emoji" aria-hidden="true">📖</span></div>
 			<div id="appTopIcon"><i class="las la-podcast" aria-hidden="true"></i></div>
 		</div>
-		<div id="appNavBar"><span id="appNavText">Placeholder</span></div>
+		<!-- View tabs: the bare URL is the camera view; ?ss opens the stock
+			 "Remote Screenshare into OBS" view. Glyphs: Bootstrap Icons 1.13.1 (MIT,
+			 see thirdparty/bootstrap-icons-1.13.1.LICENSE). -->
+		<div id="appNavBar">
+			<span id="navViewSwitch">
+				<button id="navWebcam" type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+						<path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z" />
+					</svg>
+					<span>Webcam</span>
+				</button>
+				<button id="navScreenShare" type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+						<path d="M3 3.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1.5 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m1 .5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+						<path d="M.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5zM1 5V2h14v3zm0 1h14v8H1z" />
+					</svg>
+					<span>Screen share</span>
+				</button>
+			</span>
+		</div>
 		<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
 			<link itemprop="url" href="./media/vdoNinja_logo_full.png" />
 		</span>
@@ -3410,6 +3429,10 @@
 				if (!soloLanding) {
 					return;
 				}
+				// The solo page has two views: the camera card (bare URL) and the stock
+				// "Remote Screenshare into OBS" card (?ss). Each tab is an independent
+				// session with its own stream ID, so the OBS URLs differ between views.
+				var ssView = url.has("screenshare") || url.has("ss");
 				// Encrypt the stream with a fresh random 16-character password unless the
 				// URL already provides one, so the OBS link below is private to this session.
 				if (!url.has("password") && !url.has("pass") && !url.has("pw") && !url.has("p")) {
@@ -3694,14 +3717,15 @@
 					if (!menu) {
 						return;
 					}
+					var activeCardId = ssView ? "container-2" : "container-3";
 					var cards = menu.querySelectorAll(".column.card");
 					for (var i = 0; i < cards.length; i++) {
-						if (cards[i].id !== "container-3") {
+						if (cards[i].id !== activeCardId) {
 							cards[i].classList.add("hidden");
 						}
 					}
-					getById("container-3").classList.add("skip-animation");
-					getById("container-3").classList.remove("pointer");
+					getById(activeCardId).classList.add("skip-animation");
+					getById(activeCardId).classList.remove("pointer");
 					menu.style.opacity = 1; // show the card; main.js does this at startup too
 					// The solo page is a normal scrolling document; the stock header and the
 					// fixed corner toolbar have no place in it (the OBS URL lives in the card).
@@ -3709,12 +3733,45 @@
 					getById("miniTaskBar").classList.add("hidden");
 					document.body.classList.add("solo-landing"); // in-flow bars, card and footer (theme.css)
 
+					// View tabs: open the other view in a new tab so both sources can
+					// stream simultaneously (webcam + screen share into separate OBS sources).
+					var navWebcam = getById("navWebcam");
+					var navScreenShare = getById("navScreenShare");
+					if (navWebcam && navScreenShare) {
+						(ssView ? navScreenShare : navWebcam).classList.add("active");
+						function goToView(wantSS) {
+							if (wantSS === ssView) {
+								return; // already on that view
+							}
+							var u = new URL(window.location.href);
+							u.searchParams.delete("ss");
+							u.searchParams.delete("screenshare");
+							u.searchParams.delete("push");
+							if (wantSS) {
+								u.searchParams.set("ss", "1");
+							}
+							if (session.password) {
+								u.searchParams.set("password", session.password);
+							}
+							window.open(u.href, "_blank");
+						}
+						navWebcam.onclick = function () {
+							goToView(false);
+						};
+						navScreenShare.onclick = function () {
+							goToView(true);
+						};
+					}
+
 					// Show the OBS Browser Source URL (with the session password) at the top of the card.
-					var inner = getById("add_camera_inner");
+					var inner = ssView
+						? getById("container-2").querySelector(".container-inner")
+						: getById("add_camera_inner");
 					if (!inner) {
 						return;
 					}
-					var obsURL = location.origin + location.pathname + "?V=" + session.streamID;
+					var obsStreamID = url.get("push") || url.get("id") || url.get("permaid") || session.streamID;
+					var obsURL = location.origin + location.pathname + "?V=" + obsStreamID;
 					if (session.password) {
 						obsURL += "&password=" + session.password;
 					}

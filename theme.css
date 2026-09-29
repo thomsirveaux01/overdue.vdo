@@ -248,6 +248,15 @@ body.solo-landing:not(.darktheme) #gowebcam:enabled {
 	color: #fff !important;
 	font-weight: 600;
 }
+/* The screen share view's Go button is the stock .gobutton; match the dark
+   treatment (the stock rule keeps a 2px border and black text in light). */
+body.solo-landing:not(.darktheme) #container-2 .gobutton {
+	background: hsl(221, 82.9%, 53.2%) !important;
+	border: none !important;
+	border-radius: 8px;
+	color: #fff !important;
+	font-weight: 600;
+}
 body.solo-landing:not(.darktheme) #obsUrlBox button {
 	background: hsl(221, 82.9%, 53.2%);
 	border: none;
@@ -404,8 +413,45 @@ body.solo-landing #appNavBar {
 	border-radius: 12px;
 	color: hsl(219, 18.9%, 66.4%);
 }
-body.solo-landing #appNavBar > span + span {
-	margin-left: 14px;
+/* View tabs: two distinct pill buttons with a gap. Each button has its own
+   panel2 bg, line border, and 8r; the active view and its glyph read in accent. */
+body.solo-landing #navViewSwitch {
+	display: inline-flex;
+	align-items: stretch;
+}
+body.solo-landing #navViewSwitch button {
+	display: inline-flex;
+	align-items: center;
+	padding: 8px 16px;
+	background-color: hsl(219, 28.5%, 20.3%);
+	border: 1px solid hsl(219, 24.8%, 26.9%);
+	border-radius: 8px;
+	color: hsl(219, 19.6%, 92.5%);
+	font: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: inherit;
+	cursor: pointer;
+}
+body.solo-landing #navViewSwitch button + button {
+	margin-left: 8px;
+}
+body.solo-landing #navViewSwitch button:hover {
+	background-color: hsl(219, 28.5%, 23%);
+}
+body.solo-landing #navViewSwitch button.active {
+	color: hsl(219, 99.5%, 65.4%);
+	border-color: hsla(219, 99.5%, 65.4%, 0.4);
+}
+body.solo-landing #navViewSwitch button svg {
+	width: 24px;
+	height: 24px;
+	flex: none;
+	margin-right: 8px;
+	color: hsl(219, 18.9%, 66.4%);
+}
+body.solo-landing #navViewSwitch button.active svg {
+	color: hsl(219, 99.5%, 65.4%);
 }
 
 /* Light page (?lightmode / ?whitemode): the light Bankee palette for the bars.
@@ -422,6 +468,24 @@ body.solo-landing:not(.darktheme) #appNavBar {
 	border-color: hsl(221, 49.6%, 82.3%);
 	color: hsl(221, 21.2%, 47%);
 }
+body.solo-landing:not(.darktheme) #navViewSwitch button {
+	background-color: hsl(221, 62.7%, 93.5%);
+	border-color: hsl(221, 49.6%, 82.3%);
+	color: hsl(221, 45%, 16.3%);
+}
+body.solo-landing:not(.darktheme) #navViewSwitch button:hover {
+	background-color: hsl(221, 62.7%, 90%);
+}
+body.solo-landing:not(.darktheme) #navViewSwitch button.active {
+	color: hsl(221, 82.9%, 53.2%);
+	border-color: hsla(221, 82.9%, 53.2%, 0.4);
+}
+body.solo-landing:not(.darktheme) #navViewSwitch button svg {
+	color: hsl(221, 21.2%, 47%);
+}
+body.solo-landing:not(.darktheme) #navViewSwitch button.active svg {
+	color: hsl(221, 82.9%, 53.2%);
+}
 
 /* Card row: the centered 1000px column (Bankee .wrap) */
 body.solo-landing #mainmenu.row {
@@ -431,10 +495,11 @@ body.solo-landing #mainmenu.row {
 	height: auto;
 }
 
-/* The camera card: stock skip-animation is a fixed full-screen overlay; here it is
-   an in-flow panel, so the page scrolls like Bankee's and the stock post-Go and
-   back/close flows keep working. */
-body.solo-landing #container-3.skip-animation {
+/* The active landing card (camera or screen share): stock skip-animation is a
+   fixed full-screen overlay; here it is an in-flow panel, so the page scrolls
+   like Bankee's and the stock post-Go and back/close flows keep working. */
+body.solo-landing #container-3.skip-animation,
+body.solo-landing #container-2.skip-animation {
 	position: relative !important;
 	width: 100%;
 	height: auto;

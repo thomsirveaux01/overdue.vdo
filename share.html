@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VDOverdue — Screen Share</title>
+	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<link rel="icon" type="image/png" sizes="32x32" href="./media/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./media/favicon-16x16.png">
+	<link rel="icon" href="./media/favicon.ico">
+	<link rel="stylesheet" href="./lineawesome/css/line-awesome.min.css">
+	<link rel="stylesheet" href="./theme.css">
+</head>
+<body>
+<script>
+	(function () {
+		var p = new URLSearchParams(location.search);
+		var theme = "";
+		try { theme = localStorage.getItem("vdoverdue.theme"); } catch (e) {}
+		if (p.has("lightmode") || p.has("lighttheme")) {
+			document.body.className = "lighttheme";
+		} else if (p.has("whitemode") || p.has("whitetheme")) {
+			document.body.className = "whitetheme";
+		} else if (theme === "light") {
+			document.body.className = "lighttheme";
+		} else if (theme === "stygian") {
+			document.body.className = "darktheme";
+			document.documentElement.className = "stygian";
+		} else if (theme === "system" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+			document.body.className = "lighttheme";
+		} else {
+			document.body.className = "darktheme";
+		}
+		var hue = "";
+		try { hue = localStorage.getItem("vdoverdue.hue"); } catch (e) {}
+		if (hue && hue !== "blue") { document.documentElement.setAttribute("data-hue", hue); }
+	})();
+</script>
+
+<!-- Landing card: screen share -->
+<div id="mainmenu" class="card" style="margin-top:20px;">
+	<div style="text-align:center;padding:40px 0;">
+		<i class="las la-desktop" style="font-size:64px;color:var(--muted);"></i>
+		<p class="muted" style="margin-top:12px;">Share your screen, a window, or a browser tab.</p>
+	</div>
+	<div id="obsUrlBox"></div>
+	<button id="gowebcam" class="btn" style="display:block;width:100%;" data-ready="true">
+		Share Screen
+	</button>
+	<input id="passwordBasicInput" type="password" autocomplete="off">
+
+	<!-- Stock elements lib.js references -->
+	<form id="webcamquality" style="display:none">
+		<input type="radio" name="resolution" value="0" checked>
+	</form>
+	<!-- publishScreen() reads this form's resolution2 radio; must stay a form -->
+	<form id="webcamquality2" style="display:none">
+		<input type="radio" name="resolution2" value="0" checked>
+	</form>
+	<select id="videoSourceSelect" style="display:none"></select>
+	<select id="audioSource" style="display:none"></select>
+	<select id="outputSource" style="display:none"></select>
+</div>
+
+<!-- Live video tile (post-Go) -->
+<div id="gridlayout"></div>
+
+<!-- Post-Go: share link + controls -->
+<div id="mediaPanel" class="hidden2"></div>
+<div id="head3" class="hidden2" style="display:none"></div>
+<div id="head3a" class="hidden2" style="display:none"></div>
+<a id="reshare" class="hidden2" style="display:none"></a>
+<span id="copythisurl" class="hidden2" style="display:none"></span>
+<div id="controlButtons" class="hidden2" style="display:none">
+	<button id="mutebutton" class="btn">Mute</button>
+	<button id="hangupbutton" class="btn" style="margin-left:8px">Stop</button>
+</div>
+
+<!-- Headers -->
+<div id="head1" style="display:none"></div>
+<div id="head2" style="display:none"></div>
+
+<script src="./webrtc.js"></script>
+<script>
+	var session = WebRTC.Media; // must exist before lib.js parses (stock boot pattern)
+	session.version = "31.2";
+</script>
+<script src="./lib.js"></script>
+<script src="./chrome.js"></script>
+<script>
+(function () {
+	var url = new URL(window.location.href);
+	var params = url.searchParams;
+
+	// Password
+	if (!session.password) {
+		var pw = params.get("password");
+		if (pw) {
+			session.password = pw;
+		} else {
+			var bytes = new Uint8Array(16);
+			crypto.getRandomValues(bytes);
+			session.password = Array.from(bytes, function (b) {
+				return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[b % 62];
+			}).join("");
+			params.set("password", session.password);
+			url.search = params.toString();
+			history.replaceState(null, "", url);
+		}
+	}
+
+	// Stream ID
+	if (!session.streamID || session.streamID === null) {
+		var pushId = params.get("push") || params.get("id") || params.get("permaid");
+		session.streamID = pushId || session.generateStreamID();
+	}
+
+	// Chrome
+	chromeInit("navScreenShare");
+	document.getElementById("passwordBasicInput").placeholder = "Stream password";
+
+	// Build OBS URL box
+	var obsStreamID = params.get("push") || params.get("id") || params.get("permaid") || session.streamID;
+	// The view URL always points at the index page (this page's directory).
+	var viewBase = location.origin + location.pathname.replace(/[^\/]+$/, "");
+	var obsURL = viewBase + "?V=" + obsStreamID + "&password=" + encodeURIComponent(session.password);
+	var obsBox = document.getElementById("obsUrlBox");
+	var obsInput = document.createElement("input");
+	obsInput.type = "text";
+	obsInput.value = obsURL;
+	obsInput.readOnly = true;
+	obsBox.appendChild(obsInput);
+	var obsCopy = document.createElement("button");
+	obsCopy.className = "btn";
+	obsCopy.textContent = "Copy";
+	obsCopy.onclick = function () {
+		obsInput.select();
+		document.execCommand("copy");
+		obsCopy.textContent = "Copied!";
+		setTimeout(function () { obsCopy.textContent = "Copy"; }, 1500);
+	};
+	obsBox.appendChild(obsCopy);
+
+	// Build media panel (screen share defaults: 1080p/60fps/8000kbps)
+	var panel = document.getElementById("mediaPanel");
+	// Stock quality enum for screen share: 0=1080p, -3=1440p, 1=720p
+	var SS_QUALITY_MAP = { "1920x1080": 0, "2560x1440": -3, "1280x720": 1 };
+	var defaults = { res: "1920x1080", fps: 60, kbps: 8000 };
+	try {
+		var saved = JSON.parse(localStorage.getItem("vdoverdue.screenshare"));
+		if (saved && saved.res) { defaults = saved; }
+	} catch (e) {}
+	session.screensharequality = SS_QUALITY_MAP[defaults.res] !== undefined ? SS_QUALITY_MAP[defaults.res] : 0;
+	session.screensharefps = defaults.fps;
+	session.outboundVideoBitrate = defaults.kbps;
+	session.outboundVideoBitrate_userSet = true;
+
+	// Full grid tile after Go, not the stock floating "windowed" myVideo
+	// (depends on main.css we don't load; windowed leaves a translate(0,-50%) on the video).
+	session.windowed = false;
+
+	panel.innerHTML =
+		'<div id="mediaPanelHead">Stream settings</div>' +
+		'<div id="mediaPanelControls">' +
+		'<div class="mediaField"><span>Resolution</span>' +
+		'<select id="mediaResSelect">' +
+		'<option value="1920x1080"' + (defaults.res === "1920x1080" ? " selected" : "") + '>1080p</option>' +
+		'<option value="2560x1440"' + (defaults.res === "2560x1440" ? " selected" : "") + '>1440p</option>' +
+		'<option value="1280x720"' + (defaults.res === "1280x720" ? " selected" : "") + '>720p</option>' +
+		'</select></div>' +
+		'<div class="mediaField"><span>Framerate</span>' +
+		'<select id="mediaFpsSelect">' +
+		'<option value="60"' + (String(defaults.fps) === "60" ? " selected" : "") + '>60</option>' +
+		'<option value="30"' + (String(defaults.fps) === "30" ? " selected" : "") + '>30</option>' +
+		'<option value="24"' + (String(defaults.fps) === "24" ? " selected" : "") + '>24</option>' +
+		'</select></div>' +
+		'<div class="mediaField"><span>Bitrate</span>' +
+		'<input type="number" id="mediaBitrateInput" min="500" max="20000" step="100" value="' + defaults.kbps + '"></div>' +
+		'<button id="mediaApplyButton" class="btn">Apply</button>' +
+		'</div>' +
+		'<div id="mediaPanelStatus">' +
+		'<div class="mediaStatRow"><span class="mediaStatLabel">Target</span><span id="mediaTargetLine">—</span></div>' +
+		'<div class="mediaStatRow"><span class="mediaStatLabel">Now</span><span id="mediaActualLine">—</span></div>' +
+		'<div class="mediaStatRow"><span class="mediaStatLabel">Encoder</span><span id="mediaEncoderLine">—</span></div>' +
+		'<div id="mediaLimitHint" style="display:none"></div>' +
+		'</div>';
+
+	panel.classList.remove("hidden2");
+	panel.style.display = "block";
+
+	// Apply button (used for the next share; also live for the active stream's
+	// bitrate, which the bandwidth estimator reads from session)
+	document.getElementById("mediaApplyButton").onclick = function () {
+		var res = document.getElementById("mediaResSelect").value;
+		session.screensharequality = SS_QUALITY_MAP[res] !== undefined ? SS_QUALITY_MAP[res] : 0;
+		session.screensharefps = parseInt(document.getElementById("mediaFpsSelect").value, 10);
+		session.outboundVideoBitrate = parseInt(document.getElementById("mediaBitrateInput").value, 10);
+		session.outboundVideoBitrate_userSet = true;
+		localStorage.setItem("vdoverdue.screenshare", JSON.stringify({
+			res: res, fps: session.screensharefps, kbps: session.outboundVideoBitrate
+		}));
+	};
+
+	// Go button: publishScreen()
+	document.getElementById("gowebcam").onclick = function () {
+		publishScreen();
+	};
+
+	// Status panel
+	setInterval(function () {
+		var targetLine = document.getElementById("mediaTargetLine");
+		var actualLine = document.getElementById("mediaActualLine");
+		var encoderLine = document.getElementById("mediaEncoderLine");
+		var limitHint = document.getElementById("mediaLimitHint");
+		if (!targetLine) return;
+		var res = document.getElementById("mediaResSelect").value || "—";
+		var fps = session.screensharefps || "—";
+		var kbps = session.outboundVideoBitrate || "—";
+		targetLine.textContent = res + " \u00B7 " + fps + " fps \u00B7 " + kbps + " kbps";
+		// we are the seeder; peers (viewers) live in session.pcs
+		if (session.pcs) {
+			for (var uid in session.pcs) {
+				var peer = session.pcs[uid];
+				if (peer && peer.stats && peer.stats.video_bitrate_kbps !== undefined) {
+					actualLine.textContent = (peer.stats.video_bitrate_kbps || 0) + " kbps";
+					encoderLine.textContent = peer.stats.video_encoder || "—";
+					var limit = peer.stats.quality_limitation_reason;
+					if (limit && limit !== "none") {
+						limitHint.style.display = "";
+						limitHint.textContent = "Limited: " + limit;
+					} else {
+						limitHint.style.display = "none";
+					}
+					break;
+				}
+			}
+		}
+	}, 1000);
+
+	// Stop + Mute
+	document.getElementById("hangupbutton").onclick = function () { session.hangup(); };
+	document.getElementById("mutebutton").onclick = function () { toggleMute(); };
+})();
+</script>
+</body>
+</html>

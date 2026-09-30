@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VDOverdue — Settings</title>
+	<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+	<link rel="icon" type="image/png" sizes="32x32" href="./media/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./media/favicon-16x16.png">
+	<link rel="icon" href="./media/favicon.ico">
+	<link rel="stylesheet" href="./lineawesome/css/line-awesome.min.css">
+	<link rel="stylesheet" href="./theme.css">
+</head>
+<body>
+<script>
+	(function () {
+		var p = new URLSearchParams(location.search);
+		var hue = "blue";
+		var theme = "dark";
+		try {
+			hue = localStorage.getItem("vdoverdue.hue") || hue;
+			theme = localStorage.getItem("vdoverdue.theme") || theme;
+		} catch (e) {}
+		if (p.has("lightmode") || p.has("lighttheme") || theme === "light") {
+			document.body.className = "lighttheme";
+		} else if (p.has("whitemode") || p.has("whitetheme")) {
+			document.body.className = "whitetheme";
+		} else if (theme === "stygian") {
+			document.body.className = "darktheme";
+			document.documentElement.className = "stygian";
+		} else if (theme === "system" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+			document.body.className = "lighttheme";
+		} else {
+			document.body.className = "darktheme";
+		}
+		// Hue: set on html for CSS var scoping
+		if (hue !== "blue") { document.documentElement.setAttribute("data-hue", hue); }
+	})();
+</script>
+
+<!-- Appearance card -->
+<div class="card" style="margin-top:20px;">
+	<h1 class="center">Settings</h1>
+
+	<div class="setting-row">
+		<h2>Hue</h2>
+		<div class="hue-row">
+			<span class="hue-cell">
+				<button type="button" id="hue-pink" class="hue-dot" data-hue="pink" aria-pressed="false" style="background:hsl(330,99.5%,63%)"></button>
+				<label class="hue-name" for="hue-pink">pink</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-orange" class="hue-dot" data-hue="orange" aria-pressed="false" style="background:hsl(28,99.5%,47.4%)"></button>
+				<label class="hue-name" for="hue-orange">orange</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-yellow" class="hue-dot" data-hue="yellow" aria-pressed="false" style="background:hsl(48,99.5%,65.4%)"></button>
+				<label class="hue-name" for="hue-yellow">yellow</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-blue" class="hue-dot" data-hue="blue" aria-pressed="false" style="background:hsl(220,99.5%,65.4%)"></button>
+				<label class="hue-name" for="hue-blue">blue</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-green" class="hue-dot" data-hue="green" aria-pressed="false" style="background:hsl(140,99.5%,65.4%)"></button>
+				<label class="hue-name" for="hue-green">green</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-purple" class="hue-dot" data-hue="purple" aria-pressed="false" style="background:hsl(275,99.5%,69%)"></button>
+				<label class="hue-name" for="hue-purple">purple</label>
+			</span>
+			<span class="hue-cell">
+				<button type="button" id="hue-gray" class="hue-dot" data-hue="gray" aria-pressed="false" style="background:hsl(220,0%,57.9%)"></button>
+				<label class="hue-name" for="hue-gray">gray</label>
+			</span>
+		</div>
+	</div>
+
+	<div class="setting-row">
+		<h2>Theme</h2>
+		<div class="theme-row">
+			<button type="button" class="theme-swatch t-light" data-theme="light" title="Light theme">
+				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m0-10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 2m0 10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 12m8-4a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8"/></svg>
+				<span>Light</span>
+			</button>
+			<button type="button" class="theme-swatch t-dark" data-theme="dark" title="Dark theme">
+				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.63l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097z"/></svg>
+				<span>Dark</span>
+			</button>
+			<button type="button" class="theme-swatch t-stygian" data-theme="stygian" title="Stygian — near-black">
+				<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3.5C7 3.5 3.5 7 3.5 10.8v1.2h17v-1.2C20.5 7 17 3.5 12 3.5z"/><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12C5.4 12.9 4.35 13.8 4.3 14.7C4.25 15.6 4.95 15.9 4.9 16.8C4.85 17.7 3.65 18.45 2.9 19.5"/><path d="M8.5 12C8.3 15 8 17.5 7 20.5"/><path d="M11 12C11 15 10.7 18 10.3 20.5"/><path d="M13 12C13 15 13.3 18 13.7 20.5"/><path d="M15.5 12C15.7 15 16 17.5 17 20.5"/><path d="M18 12C18.6 12.9 19.65 13.8 19.7 14.7C19.75 15.6 19.05 15.9 19.1 16.8C19.15 17.7 20.35 18.45 21.1 19.5"/></g></svg>
+				<span>Stygian</span>
+			</button>
+			<button type="button" class="theme-swatch t-system" data-theme="system" title="Match system setting">
+				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4q0 1 .25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75Q6 13 6 12H2s-2 0-2-2zm1.398-.855a.76.76 0 0 0-.254.302A1.5 1.5 0 0 0 1 4.01V10c0 .325.078.502.145.602q.105.156.302.254a1.5 1.5 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.76.76 0 0 0 .254-.302 1.5 1.5 0 0 0 .143-.538L15 9.99V4.01c0-.325-.078-.502-.145-.602q-.105-.156-.302-.254a1.5 1.5 0 0 0-.538-.143L13.99 2H2.01z"/></svg>
+				<span>System</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+<!-- Stream defaults card -->
+<div class="card" style="margin-bottom:20px;">
+	<h1 class="center">Stream Defaults</h1>
+
+	<div class="setting-row">
+		<h2>Webcam</h2>
+		<div class="stream-defaults-row">
+			<label>Resolution
+				<select id="defWebcamRes">
+					<option value="1920x1080">1080p</option>
+					<option value="1280x720">720p</option>
+					<option value="640x360">360p</option>
+				</select>
+			</label>
+			<label>Framerate
+				<select id="defWebcamFps">
+					<option value="30">30</option>
+					<option value="60">60</option>
+					<option value="24">24</option>
+				</select>
+			</label>
+			<label>Bitrate
+				<input type="number" id="defWebcamKbps" min="500" max="20000" step="100" value="6000">
+			</label>
+		</div>
+	</div>
+
+	<div class="setting-row">
+		<h2>Screen share</h2>
+		<div class="stream-defaults-row">
+			<label>Resolution
+				<select id="defShareRes">
+					<option value="1920x1080">1080p</option>
+					<option value="2560x1440">1440p</option>
+					<option value="1280x720">720p</option>
+				</select>
+			</label>
+			<label>Framerate
+				<select id="defShareFps">
+					<option value="60">60</option>
+					<option value="30">30</option>
+					<option value="24">24</option>
+				</select>
+			</label>
+			<label>Bitrate
+				<input type="number" id="defShareKbps" min="500" max="20000" step="100" value="8000">
+			</label>
+		</div>
+	</div>
+
+	<div class="setting-actions">
+		<button id="defaultsSave" class="btn">Save</button>
+		<button id="defaultsReset" class="btn ghost">Reset to defaults</button>
+	</div>
+</div>
+
+<script src="./chrome.js"></script>
+<script>
+(function () {
+	chromeInit("navSettings");
+
+	/* --- Appearance: hue --- */
+	var savedHue = "blue";
+	try { savedHue = localStorage.getItem("vdoverdue.hue") || savedHue; } catch (e) {}
+	var hueDots = document.querySelectorAll(".hue-dot");
+	for (var i = 0; i < hueDots.length; i++) {
+		hueDots[i].setAttribute("aria-pressed", String(hueDots[i].getAttribute("data-hue") === savedHue));
+		hueDots[i].onclick = (function (hue) {
+			return function () {
+				localStorage.setItem("vdoverdue.hue", hue);
+				document.documentElement.setAttribute("data-hue", hue);
+				for (var j = 0; j < hueDots.length; j++) {
+					hueDots[j].setAttribute("aria-pressed", String(hueDots[j].getAttribute("data-hue") === hue));
+				}
+				// Reload to apply the hue to all tokens
+				location.reload();
+			};
+		})(hueDots[i].getAttribute("data-hue"));
+	}
+
+	/* --- Appearance: theme (persisted; every page's boot block reads it) --- */
+	var savedTheme = "dark";
+	try { savedTheme = localStorage.getItem("vdoverdue.theme") || savedTheme; } catch (e) {}
+	var swatches = document.querySelectorAll(".theme-swatch");
+	for (var k = 0; k < swatches.length; k++) {
+		if (swatches[k].getAttribute("data-theme") === savedTheme) {
+			swatches[k].classList.add("active");
+		}
+		swatches[k].onclick = (function (theme) {
+			return function () {
+				localStorage.setItem("vdoverdue.theme", theme);
+				location.reload();
+			};
+		})(swatches[k].getAttribute("data-theme"));
+	}
+
+	/* --- Stream defaults: load --- */
+	var wcDefaults = { res: "1920x1080", fps: 30, kbps: 6000 };
+	var ssDefaults = { res: "1920x1080", fps: 60, kbps: 8000 };
+	try {
+		var wcSaved = JSON.parse(localStorage.getItem("vdoverdue.webcam"));
+		if (wcSaved && wcSaved.res) { wcDefaults = wcSaved; }
+	} catch (e) {}
+	try {
+		var ssSaved = JSON.parse(localStorage.getItem("vdoverdue.screenshare"));
+		if (ssSaved && ssSaved.res) { ssDefaults = ssSaved; }
+	} catch (e) {}
+
+	document.getElementById("defWebcamRes").value = wcDefaults.res;
+	document.getElementById("defWebcamFps").value = String(wcDefaults.fps);
+	document.getElementById("defWebcamKbps").value = wcDefaults.kbps;
+	document.getElementById("defShareRes").value = ssDefaults.res;
+	document.getElementById("defShareFps").value = String(ssDefaults.fps);
+	document.getElementById("defShareKbps").value = ssDefaults.kbps;
+
+	/* --- Stream defaults: save --- */
+	document.getElementById("defaultsSave").onclick = function () {
+		localStorage.setItem("vdoverdue.webcam", JSON.stringify({
+			res: document.getElementById("defWebcamRes").value,
+			fps: parseInt(document.getElementById("defWebcamFps").value, 10),
+			kbps: parseInt(document.getElementById("defWebcamKbps").value, 10)
+		}));
+		localStorage.setItem("vdoverdue.screenshare", JSON.stringify({
+			res: document.getElementById("defShareRes").value,
+			fps: parseInt(document.getElementById("defShareFps").value, 10),
+			kbps: parseInt(document.getElementById("defShareKbps").value, 10)
+		}));
+		var btn = document.getElementById("defaultsSave");
+		btn.textContent = "Saved!";
+		setTimeout(function () { btn.textContent = "Save"; }, 1500);
+	};
+
+	/* --- Stream defaults: reset --- */
+	document.getElementById("defaultsReset").onclick = function () {
+		localStorage.removeItem("vdoverdue.webcam");
+		localStorage.removeItem("vdoverdue.screenshare");
+		document.getElementById("defWebcamRes").value = "1920x1080";
+		document.getElementById("defWebcamFps").value = "30";
+		document.getElementById("defWebcamKbps").value = "6000";
+		document.getElementById("defShareRes").value = "1920x1080";
+		document.getElementById("defShareFps").value = "60";
+		document.getElementById("defShareKbps").value = "8000";
+	};
+})();
+</script>
+</body>
+</html>

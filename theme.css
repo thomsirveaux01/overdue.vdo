@@ -1,361 +1,96 @@
-/* Deployment theme: the Bankee Doodle design language (dark, the default here).
-   Surface/text/accent tokens are copied from that app's style.css (hue 219).
-   Rules reuse VDO.Ninja's existing selectors and token names, so stock and
-   refresh rules pick up the palette automatically. Theme rules are scoped to
-   body.darktheme; the light theme is untouched. The app bars below are a
-   deployment addition shown only on the solo-landing view. Comma hsl() syntax
-   for Chrome 80 parse safety. */
+/* VDOverdue — shared design system.
+   One file themes every page. Dark is the default; light via body:not(.darktheme).
+   Comma hsl() syntax for Chrome 80 parse safety. */
 
-body.darktheme {
-	/* Surfaces: page, panels, raised. VDO's 8-step Discord grey scale folds onto
-	   Bankee's 4-surface scale by role: card/inner (grey-7 "primary") = --panel,
-	   raised fields (grey-6) = --panel2, borders (grey-8) = --line. */
-	--background-color: hsl(219, 34.2%, 14.2%);
-	--dark-background-color: hsl(219, 34.2%, 14.2%);
-	--discord-grey-1: hsl(219, 27.8%, 17.1%);
-	--discord-grey-3: hsl(219, 27.8%, 17.1%);
-	--discord-grey-5: hsl(219, 27.8%, 17.1%);
-	--discord-grey-6: hsl(219, 28.5%, 20.3%);
-	--discord-grey-7: hsl(219, 27.8%, 17.1%);
-	--discord-grey-8: hsl(219, 24.8%, 26.9%);
-	/* Text */
-	--discord-text: hsl(219, 19.6%, 92.5%);
-	--muted-icon: hsl(219, 18.9%, 66.4%);
-	/* Accent and links */
-	--accent-color: hsl(219, 99.5%, 65.4%);
-	--accent-hover-color: hsl(219, 99.5%, 72%);
-	--a-dark-link: hsl(219, 99.5%, 65.4%);
-	--a-dark-visited: hsl(219, 99.5%, 65.4%);
-	--a-dark-hover: hsl(219, 99.5%, 72%);
-	--a-dark-focus: hsl(219, 99.5%, 72%);
-	--a-dark-active: hsl(219, 99.5%, 58%);
-	--a-darker-link: hsl(219, 90%, 78%);
-	--a-darker-visited: hsl(219, 90%, 78%);
-	--a-darker-hover: hsl(219, 95%, 84%);
-	--a-darker-focus: hsl(219, 95%, 84%);
-	--a-darker-active: hsl(219, 90%, 72%);
-	/* Status */
-	--darktheme-red: #e5484d;
-	--darktheme-green: #2fbf71;
-	/* Shape */
-	--button-radius: 8px;
-	/* Flat page; drops the stock gradient overlay */
-	background-image: none;
+/* --- Hue system (Bankee): --hue-base + --sat derive all color tokens.
+   Dark: hue = base - 1. Light: hue = base + 1. Stygian: hue = base.
+   Default blue (base 220) renders pixel-identical to the pre-hue palette. */
+:root {
+	--hue-base: 220;
+	--sat: 1;
+	--acc-s: 99.5%;
+	--acc-l: 65.4%;
+	--hue: calc(var(--hue-base) - 1);
+	--bg: hsl(var(--hue), calc(34.2% * var(--sat)), 14.2%);
+	--panel: hsl(var(--hue), calc(27.8% * var(--sat)), 17.1%);
+	--panel2: hsl(var(--hue), calc(28.5% * var(--sat)), 20.3%);
+	--panel2-h: hsl(var(--hue), calc(28.5% * var(--sat)), 23%);
+	--line: hsl(var(--hue), calc(24.8% * var(--sat)), 26.9%);
+	--text: hsl(var(--hue), calc(19.6% * var(--sat)), 92.5%);
+	--muted: hsl(var(--hue), calc(18.9% * var(--sat)), 66.4%);
+	--acc: hsl(var(--hue), var(--acc-s), var(--acc-l));
+	--acc-h: hsl(var(--hue), var(--acc-s), calc(var(--acc-l) + 6.6%));
+	--acc-line: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.4);
+	--acc-soft: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.08);
+	--ok: #2fbf71;
+	--bad: #e5484d;
+	--r-card: 12px;
+	--r-input: 8px;
+	--wrap: 1000px;
+	--pad-card: 20px;
+	--gap-card: 20px;
 }
 
-/* Header: flat page background with a hairline bottom border, no glass */
-body.darktheme #header {
-	background-color: hsl(219, 34.2%, 14.2%) !important;
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	border-bottom: 1px solid hsl(219, 24.8%, 26.9%);
+/* Stygian (Bankee): near-black; redefines surfaces only (hue at the base, no ±1) */
+html.stygian {
+	--hue: var(--hue-base);
+	--bg: hsl(var(--hue), calc(23.5% * var(--sat)), 4.7%);
+	--panel: hsl(var(--hue), calc(22.3% * var(--sat)), 8.2%);
+	--panel2: hsl(var(--hue), calc(20.7% * var(--sat)), 10.6%);
+	--panel2-h: hsl(var(--hue), calc(20.7% * var(--sat)), 13%);
+	--line: hsl(var(--hue), calc(21.2% * var(--sat)), 17.0%);
 }
 
-/* Landing cards: solid panel, hairline border, no hover lift; hover = accent border */
-body.darktheme .column.card,
-body.darktheme .column {
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 12px;
-	box-shadow: none;
-}
-body.darktheme .column:hover {
-	transform: none;
-	box-shadow: none;
-	border-color: rgba(79, 140, 255, 0.45);
-}
-
-/* Primary CTA: solid accent, no border, white label (Bankee .btn) */
-body.darktheme .gobutton,
-body.darktheme .chatBarInputButton {
-	border: none !important;
-	color: #fff !important;
-	font-weight: 600;
-}
-/* The camera card's Go button is .gowebcam (stock gray/green); make it the
-   Bankee primary button. */
-body.darktheme #gowebcam,
-body.darktheme #gowebcam:enabled {
-	background: hsl(219, 99.5%, 65.4%) !important;
-	border: none !important;
-	border-radius: 8px;
-	color: #fff !important;
-	font-weight: 600;
-}
-body.darktheme #gowebcam:hover:enabled {
-	filter: brightness(1.1);
-	box-shadow: none;
-}
-body.darktheme #gowebcam:disabled {
-	opacity: 0.45;
-}
-/* Footer links: the stock slate literal predates the theme; links read in accent */
-body.darktheme .footer > a,
-body.darktheme .footer > a:visited {
-	color: hsl(219, 99.5%, 65.4%);
-}
-body.darktheme .footer > a:hover {
-	color: hsl(219, 99.5%, 72%);
+/* Light theme: hue = base + 1, different S/L for surfaces */
+body:not(.darktheme) {
+	--hue: calc(var(--hue-base) + 1);
+	--acc-s: 82.9%;
+	--acc-l: 53.2%;
+	--bg: hsl(var(--hue), calc(63.2% * var(--sat)), 91.3%);
+	--panel: hsl(var(--hue), calc(71.3% * var(--sat)), 97.1%);
+	--panel2: hsl(var(--hue), calc(62.7% * var(--sat)), 93.5%);
+	--panel2-h: hsl(var(--hue), calc(62.7% * var(--sat)), 90%);
+	--line: hsl(var(--hue), calc(49.6% * var(--sat)), 82.3%);
+	--text: hsl(var(--hue), calc(45% * var(--sat)), 16.3%);
+	--muted: hsl(var(--hue), calc(21.2% * var(--sat)), 47%);
+	--acc: hsl(var(--hue), var(--acc-s), var(--acc-l));
+	--acc-h: hsl(var(--hue), var(--acc-s), calc(var(--acc-l) - 5.2%));
+	--acc-line: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.4);
+	--acc-soft: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.08);
 }
 
-/* Fields: raised surface, hairline border, accent focus ring */
-body.darktheme input[type="text"],
-body.darktheme input[type="search"],
-body.darktheme input[type="number"],
-body.darktheme select,
-body.darktheme textarea {
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	background: hsl(219, 28.5%, 20.3%);
-	color: hsl(219, 19.6%, 92.5%);
-	border-radius: 8px;
-}
-body.darktheme input:focus,
-body.darktheme select:focus,
-body.darktheme textarea:focus {
-	outline: 3px solid hsl(219, 99.5%, 65.4%);
-	outline-offset: 0;
-	border-color: transparent;
-}
+/* Per-hue accent S/L (the data-hue blocks). Blue is the default (no override needed). */
+html[data-hue="pink"]   { --hue-base: 330; --acc-s: 99.5%; --acc-l: 63.0%; }
+html[data-hue="orange"] { --hue-base: 28;  --acc-s: 99.5%; --acc-l: 47.4%; }
+html[data-hue="yellow"] { --hue-base: 48;  --acc-s: 99.5%; --acc-l: 65.4%; }
+html[data-hue="green"]  { --hue-base: 140; --acc-s: 99.5%; --acc-l: 65.4%; }
+html[data-hue="purple"] { --hue-base: 275; --acc-s: 99.5%; --acc-l: 69.0%; }
+html[data-hue="gray"]   { --hue-base: 220; --sat: 0; --acc-s: 99.5%; --acc-l: 57.9%; }
+/* Light variants */
+html[data-hue="pink"]   body:not(.darktheme) { --acc-s: 82.9%; --acc-l: 46.4%; }
+html[data-hue="orange"] body:not(.darktheme) { --acc-s: 82.9%; --acc-l: 50%; }
+html[data-hue="yellow"] body:not(.darktheme) { --acc-s: 88%;   --acc-l: 45%; }
+html[data-hue="green"]  body:not(.darktheme) { --acc-s: 82.9%; --acc-l: 26.3%; }
+html[data-hue="purple"] body:not(.darktheme) { --acc-s: 82.9%; --acc-l: 53.2%; }
+html[data-hue="gray"]   body:not(.darktheme) { --acc-s: 99.5%; --acc-l: 29.9%; }
 
-/* Dropdown menus (director mix list): panel surface, hairline, soft shadow */
-body.darktheme .mix-dropdown {
-	background: hsl(219, 27.8%, 17.1%);
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 10px;
-	padding: 6px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+/* --- Base --- */
+* { box-sizing: border-box; }
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
-body.darktheme .mix-dropdown-header,
-body.darktheme .mix-dropdown-section-title {
-	color: hsl(219, 18.9%, 66.4%);
-	border-bottom-color: hsl(219, 24.8%, 26.9%);
-}
-body.darktheme .mix-dropdown-item {
-	color: hsl(219, 19.6%, 92.5%);
-	border-radius: 8px;
-}
-body.darktheme .mix-dropdown-item:hover {
-	background: rgba(79, 140, 255, 0.08);
-}
+h1 { font-size: 22px; margin: 0 0 14px; }
+h2 { font-size: 16px; margin: 0 0 10px; }
+a { color: var(--acc); text-decoration: none; }
+a:hover { color: var(--acc-h); }
+.center { text-align: center; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
 
-/* Windows (modals, prompts, alerts): solid panel, hairline, soft shadow */
-body.darktheme .modal-content,
-body.darktheme .alertModalInner,
-body.darktheme .promptModalInner {
-	background-color: hsl(219, 27.8%, 17.1%) !important;
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	border: 1px solid hsl(219, 24.8%, 26.9%) !important;
-	border-radius: 12px !important;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-/* Chat module: solid panel */
-body.darktheme #chatModule {
-	background-color: hsl(219, 27.8%, 17.1%) !important;
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	border: 1px solid hsl(219, 24.8%, 26.9%) !important;
-	border-radius: 12px !important;
-}
-body.darktheme .chat-header {
-	border-bottom-color: hsl(219, 24.8%, 26.9%);
-}
-
-/* Control bar: solid raised panel */
-body.darktheme #subControlButtons {
-	background-color: hsl(219, 28.5%, 20.3%);
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 12px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-/* Status cards: panel surface, no shadow */
-body.darktheme .message-card {
-	background-color: hsl(219, 27.8%, 17.1%);
-	box-shadow: none;
-}
-
-/* Tooltips: raised surface, hairline */
-body.darktheme .tooltip .tooltiptext {
-	background-color: hsl(219, 28.5%, 20.3%) !important;
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-}
-
-/* Text selection: accent tint */
-body.darktheme ::selection {
-	background-color: rgba(79, 140, 255, 0.4);
-}
-
-/* OBS Browser Source box (deployment addition): field + primary Copy button */
-body.darktheme #obsUrlBox input {
-	background: hsl(219, 28.5%, 20.3%);
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 8px;
-	color: hsl(219, 19.6%, 92.5%);
-}
-body.darktheme #obsUrlBox button {
-	background: hsl(219, 99.5%, 65.4%);
-	border: none;
-	border-radius: 8px;
-	color: #fff;
-	font-weight: 600;
-}
-
-/* Light page (?lightmode / ?whitemode): the light Bankee palette (hue 221,
-   blue-toned, no pure white or gray). Stock light/white views keep the stock
-   palette; only the solo landing gets the Bankee look in both themes. */
-body.solo-landing:not(.darktheme) {
-	--background-color: hsl(221, 63.2%, 91.3%);
-	--lighttheme-1: hsl(221, 71.3%, 97.1%);
-	--lighttheme-2: hsl(221, 62.7%, 93.5%);
-	--lighttheme-3: hsl(221, 71.3%, 97.1%);
-	--lighttheme-4: hsl(221, 49.6%, 82.3%);
-	--lighttheme-5: hsl(221, 49.6%, 82.3%);
-	--lighttheme-6: hsl(221, 49.6%, 82.3%);
-	--lighttheme-7: hsl(221, 21.2%, 47%);
-	--lighttheme-8: hsl(221, 45%, 16.3%);
-	--lighttheme-text: hsl(221, 45%, 16.3%);
-	--accent-color: hsl(221, 82.9%, 53.2%);
-	--accent-hover-color: hsl(221, 82.9%, 58.5%);
-	--a-link: hsl(221, 82.9%, 53.2%);
-	--a-visited: hsl(221, 82.9%, 53.2%);
-	--a-hover: hsl(221, 82.9%, 48%);
-	--a-focus: hsl(221, 82.9%, 48%);
-	--a-active: hsl(221, 82.9%, 43%);
-	--a-lighter-link: hsl(221, 82.9%, 48%);
-	--a-lighter-visited: hsl(221, 82.9%, 48%);
-	--a-lighter-hover: hsl(221, 82.9%, 43%);
-	--a-lighter-focus: hsl(221, 82.9%, 43%);
-	--a-lighter-active: hsl(221, 82.9%, 38%);
-	--button-radius: 8px;
-}
-body.solo-landing:not(.darktheme) .footer > a,
-body.solo-landing:not(.darktheme) .footer > a:visited {
-	color: hsl(221, 82.9%, 53.2%);
-}
-body.solo-landing:not(.darktheme) .footer > a:hover {
-	color: hsl(221, 82.9%, 48%);
-}
-body.solo-landing:not(.darktheme) #gowebcam,
-body.solo-landing:not(.darktheme) #gowebcam:enabled {
-	background: hsl(221, 82.9%, 53.2%) !important;
-	border: none !important;
-	border-radius: 8px;
-	color: #fff !important;
-	font-weight: 600;
-}
-/* The screen share view's Go button is the stock .gobutton; match the dark
-   treatment (the stock rule keeps a 2px border and black text in light). */
-body.solo-landing:not(.darktheme) #container-2 .gobutton {
-	background: hsl(221, 82.9%, 53.2%) !important;
-	border: none !important;
-	border-radius: 8px;
-	color: #fff !important;
-	font-weight: 600;
-}
-body.solo-landing:not(.darktheme) #obsUrlBox button {
-	background: hsl(221, 82.9%, 53.2%);
-	border: none;
-	border-radius: 8px;
-	color: #fff;
-	font-weight: 600;
-}
-
-/* ?whitemode: the stock whitetheme literals (pure white/gray) are not Bankee;
-   map them onto the light palette above. */
-body.solo-landing.whitetheme {
-	background-color: hsl(221, 63.2%, 91.3%);
-	color: hsl(221, 45%, 16.3%);
-}
-body.solo-landing.whitetheme .container-inner {
-	background-color: hsl(221, 71.3%, 97.1%);
-}
-body.solo-landing.whitetheme button {
-	background-color: hsl(221, 62.7%, 93.5%);
-	border: 1px solid hsl(221, 49.6%, 82.3%);
-	color: hsl(221, 45%, 16.3%);
-}
-body.solo-landing.whitetheme button:hover {
-	background-color: hsl(221, 63.2%, 91.3%);
-}
-body.solo-landing.whitetheme .card {
-	background-color: hsl(221, 71.3%, 97.1%);
-}
-body.solo-landing.whitetheme .infoblob {
-	color: hsl(221, 21.2%, 47%);
-}
-body.solo-landing.whitetheme select,
-body.solo-landing.whitetheme input[type="text"],
-body.solo-landing.whitetheme input[type="password"] {
-	background-color: hsl(221, 62.7%, 93.5%);
-	border: 1px solid hsl(221, 49.6%, 82.3%);
-	color: hsl(221, 45%, 16.3%);
-}
-body.solo-landing.whitetheme #addPasswordBasic,
-body.solo-landing.whitetheme #avatarDiv,
-body.solo-landing.whitetheme #avatarDiv2,
-body.solo-landing.whitetheme #avatarDiv3,
-body.solo-landing.whitetheme #audioScreenShare1,
-body.solo-landing.whitetheme #audioMenu,
-body.solo-landing.whitetheme #audioMenu2,
-body.solo-landing.whitetheme #effectsDiv,
-body.solo-landing.whitetheme #effectsDiv2,
-body.solo-landing.whitetheme #effectsDiv3,
-body.solo-landing.whitetheme #grabDirectorSoloLinkParent,
-body.solo-landing.whitetheme #videoMenu,
-body.solo-landing.whitetheme #videoMenu2,
-body.solo-landing.whitetheme #videoMenu3,
-body.solo-landing.whitetheme #headphonesDiv,
-body.solo-landing.whitetheme #headphonesDiv2,
-body.solo-landing.whitetheme #headphonesDiv3,
-body.solo-landing.whitetheme #videoSettings,
-body.solo-landing.whitetheme #videoSettings2,
-body.solo-landing.whitetheme #popupSelector_user_settings,
-body.solo-landing.whitetheme .invite_setting_group {
-	background-color: hsl(221, 71.3%, 97.1%);
-	border: 1px solid hsl(221, 49.6%, 82.3%);
-}
-
-/* Solo-landing layout (deployment addition): the Bankee Doodle look. Two in-flow
-   bars above a centered 1000px column; the camera card sits on the page background;
-   the ToS/Privacy line is the in-flow centered footer. Every rule is scoped to
-   body.solo-landing, so stock views are untouched. No flex gap (Chrome 84+),
-   margins instead. Comma hsl() syntax for Chrome 80 parse safety. */
-
-/* The bars are deployment additions: hidden in every view except the solo landing */
-#appTopBar,
-#appNavBar {
-	display: none;
-}
-
-/* Stock body is a fixed full-viewport flex column; the solo page is a normal
-   scrolling document (Bankee's model). Block flow: the stock flex column would
-   turn the bars/column "margin: auto" into centering instead of stretching.
-   Fixed descendants - modals, the lightbox - stay viewport-relative. */
-body.solo-landing {
-	position: static;
-	height: auto;
-	display: block;
-}
-
-/* Bar 1: wordmark + 40px glyph circle on the page background (Bankee header;
-   the 14px bottom padding + the navbar's 6px top margin = the 20px row gap) */
-body.solo-landing #appTopBar {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	max-width: 1000px;
-	margin: 0 auto;
-	padding: 12px 20px 14px;
-	color: hsl(219, 19.6%, 92.5%);
-}
-/* Goudy Old Style is self-hosted (fonts/) so the wordmark renders the same
-   face on every machine. Provenance/license: fonts/GoudyOldStyle.LICENSE.
-   The fallback stack below covers a failed font load. */
+/* --- Font: wordmark --- */
 @font-face {
 	font-family: "Goudy Old Style";
 	font-style: normal;
@@ -370,23 +105,26 @@ body.solo-landing #appTopBar {
 	font-display: swap;
 	src: url("fonts/goudy-old-style-bold.ttf") format("truetype");
 }
-body.solo-landing #appWordmark {
+
+/* --- Chrome: top bar --- */
+#appTopBar {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	max-width: var(--wrap);
+	margin: 0 auto;
+	padding: 12px 20px 14px;
+}
+#appWordmark {
 	font-family: "Goudy Old Style", "Goudy Old Text", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
 	font-size: 40px;
 	font-weight: 700;
 	line-height: 1;
 }
-body.solo-landing #appWordmark .wm-emoji {
-	font-size: 40px;
-	line-height: 1;
-}
-body.solo-landing #appWordmark .wm-emoji:first-child {
-	margin-right: 10px;
-}
-body.solo-landing #appWordmark .wm-emoji:last-child {
-	margin-left: 10px;
-}
-body.solo-landing #appTopIcon {
+#appWordmark .wm-emoji { font-size: 40px; line-height: 1; }
+#appWordmark .wm-emoji:first-child { margin-right: 10px; }
+#appWordmark .wm-emoji:last-child { margin-left: 10px; }
+#appTopIcon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -394,188 +132,177 @@ body.solo-landing #appTopIcon {
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	background-color: hsl(219, 18.9%, 66.4%);
-	color: hsl(219, 27.8%, 17.1%);
+	background-color: var(--acc);
+	color: #fff;
+	text-decoration: none;
 }
-body.solo-landing #appTopIcon .las {
-	font-size: 24px;
+#appTopIcon svg {
+	width: 24px;
+	height: 24px;
 }
 
-/* Bar 2: the Bankee navbar panel spanning the column's content width (placeholder) */
-body.solo-landing #appNavBar {
+/* --- Chrome: nav bar --- */
+#appNavBar {
 	display: flex;
 	align-items: center;
-	max-width: 960px;
+	max-width: calc(var(--wrap) - 40px);
 	margin: 6px auto 0;
 	padding: 6px 10px;
-	background-color: hsl(219, 27.8%, 17.1%);
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 12px;
-	color: hsl(219, 18.9%, 66.4%);
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
 }
-/* View tabs + speed test: distinct pill buttons with a gap. Each button has its
-   own panel2 bg, line border, and 8r; the active view and its glyph read in accent. */
-body.solo-landing #navViewSwitch {
+#navViewSwitch {
 	display: inline-flex;
 	align-items: stretch;
 }
-body.solo-landing #navViewSwitch button {
+#navViewSwitch button {
 	display: inline-flex;
 	align-items: center;
 	margin: 0;
 	padding: 8px 12px;
-	background-color: hsl(219, 28.5%, 20.3%);
-	border: 1px solid hsl(219, 24.8%, 26.9%);
-	border-radius: 8px;
-	color: hsl(219, 19.6%, 92.5%);
+	background: var(--panel2);
+	border: 1px solid var(--line);
+	border-radius: var(--r-input);
+	color: var(--text);
 	font: inherit;
-	font-size: 14px;
+	font-size: 18px;
 	font-weight: 600;
 	line-height: inherit;
 	cursor: pointer;
 }
-body.solo-landing #navViewSwitch button + button {
-	margin-left: 10px;
+#navViewSwitch button + button { margin-left: 10px; }
+#navViewSwitch button:hover { background: var(--panel2-h); }
+#navViewSwitch button.active {
+	color: var(--acc);
+	border-color: var(--acc-line);
 }
-body.solo-landing #navViewSwitch button:hover {
-	background-color: hsl(219, 28.5%, 23%);
-}
-body.solo-landing #navViewSwitch button.active {
-	color: hsl(219, 99.5%, 65.4%);
-	border-color: hsla(219, 99.5%, 65.4%, 0.4);
-}
-body.solo-landing #navViewSwitch button svg {
+#navViewSwitch button svg {
 	width: 24px;
 	height: 24px;
 	flex: none;
 	margin-right: 8px;
-	color: hsl(219, 18.9%, 66.4%);
+	color: var(--muted);
 }
-body.solo-landing #navViewSwitch button.active svg {
-	color: hsl(219, 99.5%, 65.4%);
+#navViewSwitch button.active svg { color: var(--acc); }
+
+/* --- Components: card --- */
+.card {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	padding: var(--pad-card);
+	max-width: calc(var(--wrap) - 40px);
+	margin: 0 auto var(--gap-card);
 }
 
-/* Light page (?lightmode / ?whitemode): the light Bankee palette for the bars.
-   Scoped to the solo page; stock light/white views keep the stock palette. */
-body.solo-landing:not(.darktheme) #appTopBar {
-	color: hsl(221, 45%, 16.3%);
+/* --- Components: button --- */
+.btn {
+	display: inline-block;
+	background: var(--acc);
+	color: #fff;
+	border: none;
+	border-radius: var(--r-input);
+	padding: 10px 16px;
+	font-size: 15px;
+	font-weight: 600;
+	font-family: inherit;
+	line-height: inherit;
+	text-decoration: none;
+	cursor: pointer;
 }
-body.solo-landing:not(.darktheme) #appTopIcon {
-	background-color: hsl(221, 21.2%, 47%);
-	color: hsl(221, 71.3%, 97.1%);
-}
-body.solo-landing:not(.darktheme) #appNavBar {
-	background-color: hsl(221, 71.3%, 97.1%);
-	border-color: hsl(221, 49.6%, 82.3%);
-	color: hsl(221, 21.2%, 47%);
-}
-body.solo-landing:not(.darktheme) #navViewSwitch button {
-	background-color: hsl(221, 62.7%, 93.5%);
-	border-color: hsl(221, 49.6%, 82.3%);
-	color: hsl(221, 45%, 16.3%);
-}
-body.solo-landing:not(.darktheme) #navViewSwitch button:hover {
-	background-color: hsl(221, 62.7%, 90%);
-}
-body.solo-landing:not(.darktheme) #navViewSwitch button.active {
-	color: hsl(221, 82.9%, 53.2%);
-	border-color: hsla(221, 82.9%, 53.2%, 0.4);
-}
-body.solo-landing:not(.darktheme) #navViewSwitch button svg {
-	color: hsl(221, 21.2%, 47%);
-}
-body.solo-landing:not(.darktheme) #navViewSwitch button.active svg {
-	color: hsl(221, 82.9%, 53.2%);
+.btn:hover { filter: brightness(1.1); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { filter: none; }
+.btn.ghost {
+	background: transparent;
+	color: var(--text);
+	border: 1px solid var(--line);
+	font-weight: 500;
 }
 
-/* Card row: the centered 1000px column (Bankee .wrap) */
-body.solo-landing #mainmenu.row {
-	max-width: 1000px;
-	margin: 20px auto 0;
-	padding: 0 20px;
-	height: auto;
+/* --- Components: input --- */
+input, select {
+	width: 100%;
+	padding: 10px 12px;
+	border-radius: var(--r-input);
+	border: 1px solid var(--line);
+	background: var(--panel2);
+	color: var(--text);
+	font-size: 15px;
+	font-family: inherit;
 }
+input:focus, select:focus {
+	outline: 3px solid var(--acc);
+	outline-offset: 0;
+	border-color: transparent;
+}
+label {
+	display: block;
+	margin: 12px 0;
+	font-weight: 600;
+}
+label input, label select { margin-top: 6px; }
 
-/* The active landing card (camera or screen share): stock skip-animation is a
-   fixed full-screen overlay; here it is an in-flow panel, so the page scrolls
-   like Bankee's and the stock post-Go and back/close flows keep working. */
-body.solo-landing #container-3.skip-animation,
-body.solo-landing #container-2.skip-animation {
-	position: relative !important;
+/* --- Components: video tile --- */
+#gridlayout {
 	width: 100%;
 	height: auto;
-	top: auto;
-	left: auto;
-	z-index: auto;
-	margin: 0 0 20px !important;
-	padding: 20px;
-	border-radius: 12px !important;
-}
-
-/* Help text: the stock landing info blob is not needed on the solo page */
-body.solo-landing .infoblob {
-	display: none;
-}
-
-/* Footer: stock #credits is a fixed corner box; here it is Bankee's in-flow
-   centered small line (main.js prepends the version string into it) */
-body.solo-landing #credits {
-	position: static;
-	right: auto;
-	bottom: auto;
-	width: 100%;
-	margin: 20px 0;
-	text-align: center;
-	font-size: 11px;
-	opacity: 0.75;
-}
-
-/* Live video: the stock Go flow moves the camera into #gridlayout and removes
-   the landing #mainmenu. In the static-body solo page, give the tile a 16:9
-   block inside the same 1000px column so the page stays scrollable. */
-body.solo-landing #gridlayout {
-	width: 100%;
-	height: auto;
-	max-width: 1000px;
+	max-width: var(--wrap);
 	margin: 0 auto;
 	padding: 0 20px;
 	overflow: visible;
 }
-body.solo-landing #gridlayout > .vidcon {
+#gridlayout .vidcon,
+#gridlayout > div {
 	position: relative;
 	width: 100%;
 	height: 0;
 	padding-bottom: 56.25%; /* 16:9 */
 	overflow: hidden;
-	border-radius: 12px;
+	border-radius: var(--r-card);
 }
-body.solo-landing #gridlayout > .vidcon > video.tile {
+#gridlayout .vidcon video,
+#gridlayout > div video,
+#gridlayout video.tile {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 }
+#previewWebcam {
+	width: 100%;
+	border-radius: var(--r-input);
+}
 
-/* Media status/controls panel (deployment addition, built by the solo-landing
-   script): a body-level Bankee sub-panel, centered in the column. It survives
-   the stock Go flow, which removes the landing #mainmenu. Default palette is
-   for the light stock card; the dark theme gets the dark one. */
+/* --- Components: OBS URL box --- */
+#obsUrlBox {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin: 8px 0 16px;
+}
+#obsUrlBox input {
+	flex: 1;
+	font-size: 13px;
+	padding: 8px 10px;
+}
+#obsUrlBox button {
+	flex: none;
+	margin-left: 8px;
+	padding: 8px 14px;
+}
+
+/* --- Components: media panel --- */
 #mediaPanel {
-	background-color: hsl(221, 71.3%, 97.1%);
-	border: 1px solid hsl(221, 49.6%, 82.3%);
-	border-radius: 12px;
-	padding: 20px;
-	width: calc(100% - 40px);
-	max-width: 640px;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	padding: var(--pad-card);
+	max-width: calc(var(--wrap) - 40px);
 	margin: 20px auto;
 	text-align: left;
-	color: hsl(221, 45%, 16.3%);
-}
-body.darktheme #mediaPanel {
-	background-color: hsl(219, 27.8%, 17.1%);
-	border-color: hsl(219, 24.8%, 26.9%);
-	color: hsl(219, 19.6%, 92.5%);
 }
 #mediaPanelHead {
 	font-weight: 600;
@@ -591,48 +318,22 @@ body.darktheme #mediaPanel {
 	flex-direction: column;
 	margin: 0 14px 8px 0;
 	font-size: 13px;
-	color: hsl(221, 21.2%, 47%);
-}
-body.darktheme .mediaField {
-	color: hsl(219, 18.9%, 66.4%);
+	color: var(--muted);
 }
 #mediaPanel select,
 #mediaPanel input[type="number"] {
 	margin-top: 4px;
 	padding: 7px 10px;
-	border-radius: 8px;
-	border: 1px solid hsl(221, 49.6%, 82.3%);
-	background-color: hsl(221, 62.7%, 93.5%);
-	color: hsl(221, 45%, 16.3%);
 	font-size: 14px;
-}
-body.darktheme #mediaPanel select,
-body.darktheme #mediaPanel input[type="number"] {
-	border-color: hsl(219, 24.8%, 26.9%);
-	background-color: hsl(219, 28.5%, 20.3%);
-	color: hsl(219, 19.6%, 92.5%);
 }
 #mediaApplyButton {
 	padding: 8px 14px;
-	border: none;
-	border-radius: 8px;
-	background-color: hsl(221, 82.9%, 53.2%);
-	color: #fff;
-	font-size: 14px;
-	font-weight: 600;
-	cursor: pointer;
-}
-body.darktheme #mediaApplyButton {
-	background-color: hsl(219, 99.5%, 65.4%);
 }
 #mediaPanelStatus {
 	margin-top: 4px;
 	padding-top: 10px;
-	border-top: 1px solid hsl(221, 49.6%, 82.3%);
+	border-top: 1px solid var(--line);
 	font-size: 13px;
-}
-body.darktheme #mediaPanelStatus {
-	border-top-color: hsl(219, 24.8%, 26.9%);
 }
 .mediaStatRow {
 	display: flex;
@@ -641,180 +342,204 @@ body.darktheme #mediaPanelStatus {
 }
 .mediaStatLabel {
 	margin-right: 12px;
-	color: hsl(221, 21.2%, 47%);
-}
-body.darktheme .mediaStatLabel {
-	color: hsl(219, 18.9%, 66.4%);
+	color: var(--muted);
 }
 #mediaLimitHint {
 	margin-top: 8px;
 	font-size: 12px;
-	color: hsl(221, 21.2%, 47%);
-}
-body.darktheme #mediaLimitHint {
-	color: hsl(219, 18.9%, 66.4%);
+	color: var(--muted);
 }
 
-/* Narrow screens: stack and center the bars (Bankee) */
-@media (max-width: 700px) {
-	body.solo-landing #appTopBar {
-		flex-direction: column;
-		align-items: center;
-	}
-	body.solo-landing #appTopIcon {
-		margin-top: 6px;
-	}
-	body.solo-landing #appNavBar {
-		flex-wrap: wrap;
-		justify-content: center;
-	}
+/* --- Footer: attribution + legal --- */
+#appFooter {
+	max-width: var(--wrap);
+	margin: 20px auto;
+	padding: 0 20px 20px;
+	text-align: center;
+	font-size: 11px;
+	opacity: 0.75;
 }
+#appFooter a { color: var(--acc); text-decoration: none; }
+#appFooter a:hover { color: var(--acc-h); }
 
-/* Speed test page (speedtest.html): it reuses the solo-landing chrome above (the
-   wordmark + view tabs) and gets the Bankee palette. speedtest.css ships its own
-   slate palette, so remap it onto the Bankee tokens here. The palette is defined
-   once per theme as --st-* vars (dark by default; light/white reuse the hue-221
-   light palette) so the content follows the page theme like the other pages.
-   Scoped to the speedtest body / #mainapp so the solo landing and stock views are
-   untouched. Comma hsl() syntax for Chrome 80 parse safety. */
-
-/* speedtest.html loads no main.css, so its page model is content-box by default;
-   restore the universal border-box so the shared-bar rules compute the same widths
-   as the solo landing. */
-body.speedtest-page *,
-body.speedtest-page *::before,
-body.speedtest-page *::after {
-	box-sizing: border-box;
+/* --- Settings: appearance components --- */
+.setting-row { margin-bottom: 20px; }
+.setting-row:last-child { margin-bottom: 0; }
+.hue-row {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
 }
+.hue-cell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 8px 8px;
+}
+.hue-dot {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	border: 2px solid var(--line);
+	cursor: pointer;
+	padding: 0;
+}
+.hue-dot[aria-pressed="true"] {
+	outline: 3px solid var(--acc);
+	outline-offset: -3px;
+}
+.hue-name {
+	font-size: 11px;
+	color: var(--muted);
+	margin-top: 4px;
+}
+.theme-row {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+.theme-swatch {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 64px;
+	height: 72px;
+	border-radius: var(--r-input);
+	border: 2px solid var(--line);
+	background: var(--panel2);
+	cursor: pointer;
+	padding: 8px 4px;
+	margin: 0 8px 8px;
+	font-size: 11px;
+	font-family: inherit;
+	color: var(--text);
+}
+.theme-swatch svg {
+	width: 24px;
+	height: 24px;
+	margin-bottom: 4px;
+	color: var(--muted);
+}
+.theme-swatch.active {
+	outline: 3px solid var(--acc);
+	outline-offset: -3px;
+}
+.stream-defaults-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 0;
+}
+.stream-defaults-row label {
+	width: auto;
+	margin: 0 12px 8px 0;
+	font-size: 13px;
+}
+.stream-defaults-row select,
+.stream-defaults-row input {
+	width: auto;
+	min-width: 90px;
+}
+.setting-actions {
+	text-align: center;
+	margin-top: 16px;
+}
+.setting-actions .btn + .btn { margin-left: 10px; }
 
+/* --- Speed test page --- */
 body.speedtest-page {
-	--st-bg: hsl(219, 34.2%, 14.2%);
-	--st-panel: hsl(219, 27.8%, 17.1%);
-	--st-panel2: hsl(219, 28.5%, 20.3%);
-	--st-panel2-h: hsl(219, 28.5%, 23%);
-	--st-line: hsl(219, 24.8%, 26.9%);
-	--st-text: hsl(219, 19.6%, 92.5%);
-	--st-muted: hsl(219, 18.9%, 66.4%);
-	--st-acc: hsl(219, 99.5%, 65.4%);
-	--st-acc-h: hsl(219, 99.5%, 72%);
-	--st-red: #e5484d;
-	background: var(--st-bg);
-	color: var(--st-text);
+	background: var(--bg);
+	color: var(--text);
 }
-/* Light / white (?lightmode / ?whitemode): the hue-221 light palette, matching
-   the other pages. */
-body.speedtest-page:not(.darktheme) {
-	--st-bg: hsl(221, 63.2%, 91.3%);
-	--st-panel: hsl(221, 71.3%, 97.1%);
-	--st-panel2: hsl(221, 62.7%, 93.5%);
-	--st-panel2-h: hsl(221, 62.7%, 90%);
-	--st-line: hsl(221, 49.6%, 82.3%);
-	--st-text: hsl(221, 45%, 16.3%);
-	--st-muted: hsl(221, 21.2%, 47%);
-	--st-acc: hsl(221, 82.9%, 53.2%);
-	--st-acc-h: hsl(221, 82.9%, 48%);
-}
-
-/* Match the app's 1000px content column (the solo landing's card row). */
 #mainapp {
-	max-width: 1000px;
+	max-width: var(--wrap);
+	margin: 0 auto;
+	padding: 20px;
 }
-
-#mainapp h1 {
-	color: var(--st-text);
-	margin: 0 0 14px;
-}
-#mainapp h2 {
-	color: var(--st-muted);
-}
-#mainapp a {
-	color: var(--st-acc);
-}
-#mainapp a:hover {
-	color: var(--st-acc-h);
-}
+#mainapp h1 { color: var(--text); margin: 0 0 14px; }
+#mainapp h2 { color: var(--muted); }
+#mainapp a { color: var(--acc); }
+#mainapp a:hover { color: var(--acc-h); }
 #mainapp button {
-	background-color: var(--st-panel2);
-	border: 1px solid var(--st-line);
-	border-radius: 8px;
-	color: var(--st-text);
+	background: var(--panel2);
+	border: 1px solid var(--line);
+	border-radius: var(--r-input);
+	color: var(--text);
+	cursor: pointer;
+	font: inherit;
 }
-#mainapp button:hover {
-	background-color: var(--st-panel2-h);
-	border-color: var(--st-line);
-}
+#mainapp button:hover { background: var(--panel2-h); }
 #mainapp button.active {
-	background-color: var(--st-acc);
-	border-color: var(--st-acc);
+	background: var(--acc);
+	border-color: var(--acc);
 	color: #fff;
 }
 #mainapp button.red {
-	background-color: var(--st-red);
-	border-color: var(--st-red);
+	background: var(--bad);
+	border-color: var(--bad);
 }
-
-/* The metric graphs, the log, and the how-to read as Bankee cards (panel + hairline + 12r). */
 #mainapp #graphs,
 #mainapp #log,
 #mainapp #explanation {
-	background: var(--st-panel);
-	border: 1px solid var(--st-line);
-	border-radius: 12px;
-	padding: 20px;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	padding: var(--pad-card);
 	margin: 20px auto;
 	max-width: none;
 }
-#mainapp .graph h2 {
-	color: var(--st-muted);
-}
-#mainapp .graph span {
-	color: var(--st-text);
-}
+#mainapp .graph h2 { color: var(--muted); }
+#mainapp .graph span { color: var(--text); }
 #mainapp canvas {
-	background: var(--st-panel);
-	border: 1px solid var(--st-line);
+	background: var(--panel);
+	border: 1px solid var(--line);
 }
 #mainapp #feeds iframe {
-	border: 1px solid var(--st-line);
-	border-radius: 12px;
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
 }
-#mainapp #feeds h3 {
-	color: var(--st-muted);
-}
+#mainapp #feeds h3 { color: var(--muted); }
 #mainapp #log li {
-	color: var(--st-text);
-	border-bottom-color: var(--st-line);
+	color: var(--text);
+	border-bottom-color: var(--line);
 }
 #mainapp #log h2,
-#mainapp #explanation h2 {
-	color: var(--st-text);
-}
-#mainapp #explanation ol {
-	color: var(--st-muted);
-}
-#mainapp .guest-check {
-	color: var(--st-muted);
-}
+#mainapp #explanation h2 { color: var(--text); }
+#mainapp #explanation ol { color: var(--muted); }
+#mainapp .guest-check { color: var(--muted); }
 #mainapp code {
-	background: var(--st-panel2);
-	color: var(--st-acc);
+	background: var(--panel2);
+	color: var(--acc);
 }
 #mainapp select {
-	background: var(--st-panel2);
-	color: var(--st-text);
-	border: 1px solid var(--st-line);
-	border-radius: 8px;
+	background: var(--panel2);
+	color: var(--text);
+	border: 1px solid var(--line);
+	border-radius: var(--r-input);
 }
 #mainapp #speedtest-legal-footer {
-	border-top-color: var(--st-line);
-	color: var(--st-muted);
+	border-top-color: var(--line);
+	color: var(--muted);
 }
-#mainapp #speedtest-legal-footer a {
-	color: var(--st-acc);
-}
-#mainapp #speedtest-legal-footer a:hover {
-	color: var(--st-acc-h);
-}
-#mainapp #speedtest-legal-footer .divider {
-	color: var(--st-muted);
+#mainapp #speedtest-legal-footer a { color: var(--acc); }
+#mainapp #speedtest-legal-footer a:hover { color: var(--acc-h); }
+#mainapp #speedtest-legal-footer .divider { color: var(--muted); }
+
+/* --- Responsive: 700px --- */
+@media (max-width: 700px) {
+	#appTopBar {
+		flex-direction: column;
+		align-items: center;
+	}
+	#appTopIcon { margin-top: 6px; }
+	#appNavBar {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	#obsUrlBox { flex-direction: column; }
+	#obsUrlBox button { margin: 8px 0 0; }
+	.stream-defaults-row { flex-direction: column; align-items: stretch; }
+	.stream-defaults-row label { width: 100%; margin: 0 0 8px; }
+	.stream-defaults-row select,
+	.stream-defaults-row input { width: 100%; }
 }

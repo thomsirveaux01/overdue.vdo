@@ -37,6 +37,25 @@
 	})();
 </script>
 
+<!-- Stock device plumbing: gotDevices() looks these up with raw
+     getElementById (throws if missing) and publishScreen() reads the
+     resolution2 radio. They must NOT live inside #mainmenu: stock code
+     removes #mainmenu from the DOM as soon as the first viewer connects
+     (webrtc.js, "MAKING A NEW RPCS"), and a re-share after that still
+     needs them. -->
+<div style="display:none">
+	<span id="multiselect-trigger"></span>
+	<form id="webcamquality">
+		<input type="radio" name="resolution" value="0" checked>
+	</form>
+	<form id="webcamquality2">
+		<input type="radio" name="resolution2" value="0" checked>
+	</form>
+	<select id="videoSourceSelect"></select>
+	<select id="audioSource"></select>
+	<select id="outputSource"></select>
+</div>
+
 <!-- Landing card: screen share -->
 <div id="mainmenu" class="card" style="margin-top:20px;">
 	<div style="text-align:center;padding:40px 0;">
@@ -48,18 +67,6 @@
 		Share Screen
 	</button>
 	<input id="passwordBasicInput" type="password" autocomplete="off">
-
-	<!-- Stock elements lib.js references -->
-	<form id="webcamquality" style="display:none">
-		<input type="radio" name="resolution" value="0" checked>
-	</form>
-	<!-- publishScreen() reads this form's resolution2 radio; must stay a form -->
-	<form id="webcamquality2" style="display:none">
-		<input type="radio" name="resolution2" value="0" checked>
-	</form>
-	<select id="videoSourceSelect" style="display:none"></select>
-	<select id="audioSource" style="display:none"></select>
-	<select id="outputSource" style="display:none"></select>
 </div>
 
 <!-- Live video tile (post-Go) -->
@@ -145,6 +152,12 @@
 	var panel = document.getElementById("mediaPanel");
 	// Stock quality enum for screen share: 0=1080p, -3=1440p, 1=720p
 	var SS_QUALITY_MAP = { "1920x1080": 0, "2560x1440": -3, "1280x720": 1 };
+	// Ideal widths per quality (publishScreen/grabScreen constraint values),
+	// used to detect whether the active capture already matches the request.
+	var SS_RES_WIDTH = { 0: 1920, "-3": 2560, 1: 1280, 2: 640, "-2": 3840 };
+	// True while a stop->re-share is in flight (guards the 250ms gap between
+	// the stock stop branch and the re-share prompt).
+	var ssBusy = false;
 	var defaults = { res: "1920x1080", fps: 60, kbps: 8000 };
 	try {
 		var saved = JSON.parse(localStorage.getItem("vdoverdue.screenshare"));
@@ -177,6 +190,7 @@
 		'<div class="mediaField"><span>Bitrate</span>' +
 		'<input type="number" id="mediaBitrateInput" min="500" max="20000" step="100" value="' + defaults.kbps + '"></div>' +
 		'<button id="mediaApplyButton" class="btn">Apply</button>' +
+		'<button id="mediaReshareButton" class="btn" style="display:none">Share Screen</button>' +
 		'</div>' +
 		'<div id="mediaPanelStatus">' +
 		'<div class="mediaStatRow"><span class="mediaStatLabel">Target</span><span id="mediaTargetLine">—</span></div>' +
@@ -188,8 +202,9 @@
 	panel.classList.remove("hidden2");
 	panel.style.display = "block";
 
-	// Apply button (used for the next share; also live for the active stream's
-	// bitrate, which the bandwidth estimator reads from session)
+	// Apply button: persist the defaults, and apply them to an active share.
+	// Bitrate is already live (the bandwidth estimator reads the session);
+	// resolution/framerate need a re-capture, handled by applyScreenShareLive.
 	document.getElementById("mediaApplyButton").onclick = function () {
 		var res = document.getElementById("mediaResSelect").value;
 		session.screensharequality = SS_QUALITY_MAP[res] !== undefined ? SS_QUALITY_MAP[res] : 0;
@@ -199,11 +214,67 @@
 		localStorage.setItem("vdoverdue.screenshare", JSON.stringify({
 			res: res, fps: session.screensharefps, kbps: session.outboundVideoBitrate
 		}));
+		// grabScreen() (the re-share path) has no ideal-dim mapping for 4K/1440p
+		// and would fall back to native resolution; the stock width/height
+		// override supplies exact values (publishScreen honors them too).
+		if (session.screensharequality === -2) { session.width = 3840; session.height = 2160; }
+		else if (session.screensharequality === -3) { session.width = 2560; session.height = 1440; }
+		else { session.width = null; session.height = null; }
+		applyScreenShareLive();
 	};
+
+	// If a share is live, re-apply resolution/framerate through the stock
+	// stop/re-share flow: toggleScreenShare()'s stop branch tears down the
+	// capture (senders keep the ended track, viewer sees videoMuted:true),
+	// then its add branch re-runs grabScreen(), which re-prompts for the
+	// surface (user re-picks the same one), reuses the existing tile,
+	// replaceTrack()s into the existing senders, and sends videoMuted:false.
+	function applyScreenShareLive() {
+		if (!session.screenShareState) return; // not sharing; values arm the next share
+		if (ssBusy) return;
+		var track = session.streamSrc ? session.streamSrc.getVideoTracks()[0] : null;
+		if (!track) return;
+		var st;
+		try { st = track.getSettings(); } catch (e) { return; }
+		var wantW = SS_RES_WIDTH[session.screensharequality];
+		var resChanged = false;
+		if (wantW && st.width) {
+			// Window/tab captures clamp to the surface size; only monitor
+			// captures (or an unknown source) actually honor the request.
+			var src = null;
+			try { src = track.getCapabilities().captureSource; } catch (e) { }
+			if (src !== "window" && src !== "tab") {
+				resChanged = Math.abs(st.width - wantW) > Math.max(32, wantW * 0.05);
+			}
+		}
+		var fpsChanged = Math.abs((st.frameRate || 0) - session.screensharefps) >= 1;
+		if (!resChanged && !fpsChanged) return; // bitrate-only change: already live
+		log("VDOverdue: screen share Apply — restarting capture for " + wantW + " @ " + session.screensharefps + "fps (was " + st.width + " @ " + (st.frameRate || 0) + "fps)");
+		ssBusy = true;
+		toggleScreenShare().then(function () {
+			setTimeout(function () {
+				ssBusy = false;
+				toggleScreenShare();
+			}, 250);
+		});
+	}
 
 	// Go button: publishScreen()
 	document.getElementById("gowebcam").onclick = function () {
 		publishScreen();
+	};
+
+	// Resume a stopped share once the landing card is gone (stock removes
+	// #mainmenu at publish time, which takes the landing Share button with
+	// it). Uses the stock toggleScreenShare() "add" branch — grabScreen()
+	// plus play() and the updateMixer() layout pass, which is what puts the
+	// local tile back in the grid after the stop branch removed it. The
+	// capture prompt re-asks for the surface.
+	document.getElementById("mediaReshareButton").onclick = function () {
+		if (ssBusy || session.screenShareState) return;
+		if (!session.streamSrc) { checkBasicStreamsExist(); }
+		log("VDOverdue: screen share resume");
+		toggleScreenShare();
 	};
 
 	// Status panel
@@ -212,7 +283,20 @@
 		var actualLine = document.getElementById("mediaActualLine");
 		var encoderLine = document.getElementById("mediaEncoderLine");
 		var limitHint = document.getElementById("mediaLimitHint");
+		var reshareBtn = document.getElementById("mediaReshareButton");
+		if (reshareBtn) {
+			reshareBtn.style.display = (!document.getElementById("mainmenu") && !ssBusy && !session.screenShareState) ? "" : "none";
+		}
 		if (!targetLine) return;
+		// Post-Go controls (Stop/Mute) and the public view link (#reshare, filled
+		// by stock updateReshareLink when #mainmenu is removed at publish time)
+		// carry inline display:none; reveal them here, keyed on seeding, so Stop
+		// is available the moment Share is hit.
+		var postGo = !!session.seeding || !document.getElementById("mainmenu");
+		var cb = document.getElementById("controlButtons");
+		if (cb) { cb.style.display = postGo ? "" : "none"; }
+		var rs = document.getElementById("reshare");
+		if (rs) { rs.style.display = postGo ? "" : "none"; }
 		var res = document.getElementById("mediaResSelect").value || "—";
 		var fps = session.screensharefps || "—";
 		var kbps = session.outboundVideoBitrate || "—";
@@ -237,8 +321,8 @@
 		}
 	}, 1000);
 
-	// Stop + Mute
-	document.getElementById("hangupbutton").onclick = function () { session.hangup(); };
+	// Stop + Mute (Stop ends the session and returns to the landing card)
+	document.getElementById("hangupbutton").onclick = function () { session.hangup(true); };
 	document.getElementById("mutebutton").onclick = function () { toggleMute(); };
 })();
 </script>

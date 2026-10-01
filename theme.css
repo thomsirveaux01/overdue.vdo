@@ -18,10 +18,12 @@
 	--line: hsl(var(--hue), calc(24.8% * var(--sat)), 26.9%);
 	--text: hsl(var(--hue), calc(19.6% * var(--sat)), 92.5%);
 	--muted: hsl(var(--hue), calc(18.9% * var(--sat)), 66.4%);
-	--acc: hsl(var(--hue), var(--acc-s), var(--acc-l));
-	--acc-h: hsl(var(--hue), var(--acc-s), calc(var(--acc-l) + 6.6%));
-	--acc-line: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.4);
-	--acc-soft: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.08);
+	/* accents scale with --sat too, so the gray hue desaturates them (Bankee) */
+	--acc: hsl(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l));
+	--acc-h: hsl(var(--hue), calc(var(--acc-s) * var(--sat)), calc(var(--acc-l) + 6.6%));
+	--acc-line: hsla(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l), 0.4);
+	--acc-mid: hsla(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l), 0.16);
+	--acc-soft: hsla(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l), 0.08);
 	--ok: #2fbf71;
 	--bad: #e5484d;
 	--r-card: 12px;
@@ -53,10 +55,10 @@ body:not(.darktheme) {
 	--line: hsl(var(--hue), calc(49.6% * var(--sat)), 82.3%);
 	--text: hsl(var(--hue), calc(45% * var(--sat)), 16.3%);
 	--muted: hsl(var(--hue), calc(21.2% * var(--sat)), 47%);
-	--acc: hsl(var(--hue), var(--acc-s), var(--acc-l));
-	--acc-h: hsl(var(--hue), var(--acc-s), calc(var(--acc-l) - 5.2%));
-	--acc-line: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.4);
-	--acc-soft: hsla(var(--hue), var(--acc-s), var(--acc-l), 0.08);
+	--acc: hsl(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l));
+	--acc-h: hsl(var(--hue), calc(var(--acc-s) * var(--sat)), calc(var(--acc-l) - 5.2%));
+	--acc-line: hsla(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l), 0.4);
+	--acc-soft: hsla(var(--hue), calc(var(--acc-s) * var(--sat)), var(--acc-l), 0.08);
 }
 
 /* Per-hue accent S/L (the data-hue blocks). Blue is the default (no override needed). */
@@ -350,6 +352,7 @@ label input, label select { margin-top: 6px; }
 	color: var(--muted);
 }
 
+
 /* --- Footer: attribution + legal --- */
 #appFooter {
 	max-width: var(--wrap);
@@ -362,68 +365,86 @@ label input, label select { margin-top: 6px; }
 #appFooter a { color: var(--acc); text-decoration: none; }
 #appFooter a:hover { color: var(--acc-h); }
 
-/* --- Settings: appearance components --- */
-.setting-row { margin-bottom: 20px; }
-.setting-row:last-child { margin-bottom: 0; }
-.hue-row {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
+/* --- Settings: appearance (Bankee Doodle, verbatim) ---
+   Floor is Chrome 84 (user decision 2026-09-30): flex gap and space-syntax
+   hsl() are Bankee's exact code, kept as-is. Only adaptation: his html.light
+   scope is body:not(.darktheme) here (our theme class lives on <body>);
+   app-specific selectors (cust-*, row-actions, modal-close) trimmed. */
+/* settings page: label left, action right */
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+/* Appearance (Settings page): each button PREVIEWS its theme with literal bg/text/border;
+   'system' matches the OS via prefers-color-scheme; active = accent inset outline. */
+.appearance-row { flex-wrap: wrap; }
+.appearance-row h1, .appearance-row h2 { margin: 0; white-space: nowrap; }
+.theme-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.theme-row .dl { flex: none; width: 140px; margin-right: 0;
+	display: flex; flex-direction: column; align-items: center;
+	justify-content: center; gap: 6px; padding: 13px 18px;
+	font-size: 14px; font-weight: 600; }
+/* 32px glyphs in the appearance swatches (Bankee's shared 32px glyph rule, .dl.theme part) */
+.dl.theme svg { width: 32px; height: 32px; }
+.dl.theme svg { flex: none; }
+/* the swatch glyphs are 32px; the chip's vertical padding lets them grow
+   into the padding, not the box */
+/* theme previews */
+/* swatches preview each theme's own tokens (sat 0 = the gray hue), keyed on
+   --hue-base because a var can't cross the light scope; the t-stygian bg
+   is fixed #10131a (the conversion log's color), text/border follow the hue */
+.dl.t-light   { background: hsl(calc(var(--hue-base) + 1) calc(71.3% * var(--sat)) 97.1%); color: hsl(calc(var(--hue-base) + 1) calc(45.0% * var(--sat)) 16.3%); border: 1px solid hsl(calc(var(--hue-base) + 1) calc(49.6% * var(--sat)) 82.3%); }
+/* system mirrors dark until the prefers-color-scheme override below */
+.dl.t-dark, .dl.t-system { background: hsl(calc(var(--hue-base) - 1) calc(27.8% * var(--sat)) 17.1%); color: hsl(calc(var(--hue-base) - 1) calc(19.6% * var(--sat)) 92.5%); border: 1px solid hsl(calc(var(--hue-base) - 1) calc(24.8% * var(--sat)) 26.9%); }
+.dl.t-stygian { background: #10131a; color: hsl(var(--hue-base) calc(19.6% * var(--sat)) 92.5%); border: 1px solid hsl(var(--hue-base) calc(21.2% * var(--sat)) 17.0%); }
+/* the octopus's eyes cut out its own bg (a literal fill would ignore the hue) */
+.dl.t-stygian svg circle { fill: #10131a; }
+@media (prefers-color-scheme: light) {
+	.dl.t-system { background: hsl(calc(var(--hue-base) + 1) calc(71.3% * var(--sat)) 97.1%); color: hsl(calc(var(--hue-base) + 1) calc(45.0% * var(--sat)) 16.3%); border: 1px solid hsl(calc(var(--hue-base) + 1) calc(49.6% * var(--sat)) 82.3%); }
 }
-.hue-cell {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin: 0 8px 8px;
-}
-.hue-dot {
-	width: 48px;
-	height: 48px;
-	border-radius: 50%;
-	border: 2px solid var(--line);
-	cursor: pointer;
-	padding: 0;
-}
-.hue-dot[aria-pressed="true"] {
-	outline: 3px solid var(--acc);
-	outline-offset: -3px;
-}
-.hue-name {
-	font-size: 11px;
-	color: var(--muted);
-	margin-top: 4px;
-}
-.theme-row {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-}
-.theme-swatch {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	width: 64px;
-	height: 72px;
-	border-radius: var(--r-input);
-	border: 2px solid var(--line);
-	background: var(--panel2);
-	cursor: pointer;
-	padding: 8px 4px;
-	margin: 0 8px 8px;
-	font-size: 11px;
-	font-family: inherit;
-	color: var(--text);
-}
-.theme-swatch svg {
-	width: 24px;
-	height: 24px;
-	margin-bottom: 4px;
-	color: var(--muted);
-}
-.theme-swatch.active {
-	outline: 3px solid var(--acc);
-	outline-offset: -3px;
-}
+/* glyph colors: sun orange, moon blue, octopus green, PC gray */
+.dl.t-light svg   { color: #f59e0b; }
+.dl.t-dark svg    { color: #4f8cff; }
+.dl.t-stygian svg { color: #2fbf71; }
+.dl.t-system svg  { color: #98a0ad; }
+/* active: the accent-inset "selected" marker — theme chips (they sit on dark, so the accent reads) */
+.dl.theme.active { outline: 3px solid var(--acc); outline-offset: -3px; }
+/* Hue picker (Settings): 48px solid circles over text labels, one per hue,
+   each previewing its OWN accent in the current theme regardless of the
+   selection (dot hue = base + the scope's ±1 offset; gray is neutral).
+   Selected = the same inset outline as the color swatches (black in light,
+   where white would vanish). The row spans the theme row's width (4 chips +
+   gaps) so both rows share one span; the labels are the dots' accessible
+   names (label[for] → click toggles). */
+.hue-row { display: flex; justify-content: space-between; flex-wrap: wrap;
+	row-gap: 12px; width: calc(4 * 140px + 3 * 10px); max-width: 100%; }
+.hue-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.hue-dot { width: 48px; height: 48px; border-radius: 50%; border: none;
+	cursor: pointer; padding: 0; flex: none; }
+.hue-dot.active { outline: 3px solid #fff; outline-offset: -3px; }
+/* a white ring vanishes on a light dot, so light mode draws it black (the
+   same treatment as the color swatches above) */
+body:not(.darktheme) .hue-dot.active { outline-color: #000; }
+.hue-name { font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.hue-dot[data-hue="pink"]   { background: hsl(329 99.5% 63.0%); }
+.hue-dot[data-hue="orange"] { background: hsl(27 99.5% 47.4%); }
+.hue-dot[data-hue="yellow"] { background: hsl(47 99.5% 65.4%); }
+.hue-dot[data-hue="blue"]   { background: hsl(219 99.5% 65.4%); }
+.hue-dot[data-hue="green"]  { background: hsl(139 99.5% 65.4%); }
+.hue-dot[data-hue="purple"] { background: hsl(274 99.5% 69.0%); }
+.hue-dot[data-hue="gray"]   { background: hsl(219 0% 57.9%); }
+body:not(.darktheme) .hue-dot[data-hue="pink"]   { background: hsl(331 82.9% 46.4%); }
+body:not(.darktheme) .hue-dot[data-hue="orange"] { background: hsl(29 82.9% 50%); }
+body:not(.darktheme) .hue-dot[data-hue="yellow"] { background: hsl(49 88% 45%); }
+body:not(.darktheme) .hue-dot[data-hue="blue"]   { background: hsl(221 82.9% 53.2%); }
+body:not(.darktheme) .hue-dot[data-hue="green"]  { background: hsl(141 82.9% 26.3%); }
+body:not(.darktheme) .hue-dot[data-hue="purple"] { background: hsl(276 82.9% 53.2%); }
+body:not(.darktheme) .hue-dot[data-hue="gray"]   { background: hsl(221 0% 29.9%); }
+/* .dl chip base; the Appearance swatch layout is overridden by .theme-row */
+.dl { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px;
+	border-radius: 6px; font-size: 11px; font-weight: 700; line-height: 1;
+	color: var(--acc); background: var(--acc-mid); border: 1px solid var(--acc-line);
+	text-decoration: none; margin-right: 6px; vertical-align: middle; }
+/* reset the UA button defaults on .dl chips */
+button.dl { font-family: inherit; cursor: pointer; }
+.dl:hover { filter: brightness(1.2); }
 .stream-defaults-row {
 	display: flex;
 	flex-wrap: wrap;

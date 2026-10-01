@@ -41,60 +41,69 @@
 <!-- Appearance card -->
 <div class="card" style="margin-top:20px;">
 	<h1 class="center">Settings</h1>
-
-	<div class="setting-row">
+	<div class="setting-row appearance-row">
 		<h2>Hue</h2>
 		<div class="hue-row">
-			<span class="hue-cell">
-				<button type="button" id="hue-pink" class="hue-dot" data-hue="pink" aria-pressed="false" style="background:hsl(330,99.5%,63%)"></button>
-				<label class="hue-name" for="hue-pink">pink</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-orange" class="hue-dot" data-hue="orange" aria-pressed="false" style="background:hsl(28,99.5%,47.4%)"></button>
-				<label class="hue-name" for="hue-orange">orange</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-yellow" class="hue-dot" data-hue="yellow" aria-pressed="false" style="background:hsl(48,99.5%,65.4%)"></button>
-				<label class="hue-name" for="hue-yellow">yellow</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-blue" class="hue-dot" data-hue="blue" aria-pressed="false" style="background:hsl(220,99.5%,65.4%)"></button>
-				<label class="hue-name" for="hue-blue">blue</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-green" class="hue-dot" data-hue="green" aria-pressed="false" style="background:hsl(140,99.5%,65.4%)"></button>
-				<label class="hue-name" for="hue-green">green</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-purple" class="hue-dot" data-hue="purple" aria-pressed="false" style="background:hsl(275,99.5%,69%)"></button>
-				<label class="hue-name" for="hue-purple">purple</label>
-			</span>
-			<span class="hue-cell">
-				<button type="button" id="hue-gray" class="hue-dot" data-hue="gray" aria-pressed="false" style="background:hsl(220,0%,57.9%)"></button>
-				<label class="hue-name" for="hue-gray">gray</label>
-			</span>
+		<!-- Each dot is a labeled button: the visible label is its accessible name
+			(and clicking it toggles the dot). -->
+		<span class="hue-cell">
+			<button type="button" id="hue-pink" class="hue-dot" data-hue="pink" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-pink">pink</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-orange" class="hue-dot" data-hue="orange" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-orange">orange</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-yellow" class="hue-dot" data-hue="yellow" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-yellow">yellow</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-blue" class="hue-dot" data-hue="blue" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-blue">blue</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-green" class="hue-dot" data-hue="green" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-green">green</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-purple" class="hue-dot" data-hue="purple" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-purple">purple</label>
+		</span>
+		<span class="hue-cell">
+			<button type="button" id="hue-gray" class="hue-dot" data-hue="gray" aria-pressed="false"></button>
+			<label class="hue-name" for="hue-gray">gray</label>
+		</span>
 		</div>
 	</div>
-
-	<div class="setting-row">
+	<div class="setting-row appearance-row">
 		<h2>Theme</h2>
 		<div class="theme-row">
-			<button type="button" class="theme-swatch t-light" data-theme="light" title="Light theme">
-				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m0-10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 2m0 10a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 12m8-4a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8"/></svg>
-				<span>Light</span>
-			</button>
-			<button type="button" class="theme-swatch t-dark" data-theme="dark" title="Dark theme">
-				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.63l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097z"/></svg>
-				<span>Dark</span>
-			</button>
-			<button type="button" class="theme-swatch t-stygian" data-theme="stygian" title="Stygian — near-black">
-				<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3.5C7 3.5 3.5 7 3.5 10.8v1.2h17v-1.2C20.5 7 17 3.5 12 3.5z"/><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 12C5.4 12.9 4.35 13.8 4.3 14.7C4.25 15.6 4.95 15.9 4.9 16.8C4.85 17.7 3.65 18.45 2.9 19.5"/><path d="M8.5 12C8.3 15 8 17.5 7 20.5"/><path d="M11 12C11 15 10.7 18 10.3 20.5"/><path d="M13 12C13 15 13.3 18 13.7 20.5"/><path d="M15.5 12C15.7 15 16 17.5 17 20.5"/><path d="M18 12C18.6 12.9 19.65 13.8 19.7 14.7C19.75 15.6 19.05 15.9 19.1 16.8C19.15 17.7 20.35 18.45 21.1 19.5"/></g></svg>
-				<span>Stygian</span>
-			</button>
-			<button type="button" class="theme-swatch t-system" data-theme="system" title="Match system setting">
-				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4q0 1 .25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75Q6 13 6 12H2s-2 0-2-2zm1.398-.855a.76.76 0 0 0-.254.302A1.5 1.5 0 0 0 1 4.01V10c0 .325.078.502.145.602q.105.156.302.254a1.5 1.5 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.76.76 0 0 0 .254-.302 1.5 1.5 0 0 0 .143-.538L15 9.99V4.01c0-.325-.078-.502-.145-.602q-.105-.156-.302-.254a1.5 1.5 0 0 0-.538-.143L13.99 2H2.01z"/></svg>
-				<span>System</span>
-			</button>
+		<button type="button" class="dl theme t-light" data-theme="light" title="Light theme">
+			<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/></svg>
+			Light</button>
+		<button type="button" class="dl theme t-dark" data-theme="dark" title="Dark theme">
+			<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/></svg>
+			Dark</button>
+		<button type="button" class="dl theme t-stygian" data-theme="stygian" title="Stygian — near-black">
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path fill="currentColor" d="M12 3.5C7 3.5 3.5 7 3.5 10.8v1.2h17v-1.2C20.5 7 17 3.5 12 3.5z"/>
+				<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+					<path d="M6 12C5.4 12.9 4.35 13.8 4.3 14.7C4.25 15.6 4.95 15.9 4.9 16.8C4.85 17.7 3.65 18.45 2.9 19.5"/>
+					<path d="M8.5 12C8.3 15 8 17.5 7 20.5"/>
+					<path d="M11 12C11 15 10.7 18 10.3 20.5"/>
+					<path d="M13 12C13 15 13.3 18 13.7 20.5"/>
+					<path d="M15.5 12C15.7 15 16 17.5 17 20.5"/>
+					<path d="M18 12C18.6 12.9 19.65 13.8 19.7 14.7C19.75 15.6 19.05 15.9 19.1 16.8C19.15 17.7 20.35 18.45 21.1 19.5"/>
+				</g>
+				<!-- eyes cut out in the button's own bg (this glyph only ever sits on .t-stygian) -->
+				<circle cx="8.7" cy="8.8" r="1.35"/>
+				<circle cx="15.3" cy="8.8" r="1.35"/>
+			</svg>
+			Stygian</button>
+		<button type="button" class="dl theme t-system" data-theme="system" title="Match system setting — follows your device's light/dark preference (macOS, Windows, iOS, Android, …) and updates live">
+			<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4q0 1 .25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75Q6 13 6 12H2s-2 0-2-2zm1.398-.855a.76.76 0 0 0-.254.302A1.5 1.5 0 0 0 1 4.01V10c0 .325.078.502.145.602q.105.156.302.254a1.5 1.5 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.76.76 0 0 0 .254-.302 1.5 1.5 0 0 0 .143-.538L15 9.99V4c0-.325-.078-.502-.145-.602a.76.76 0 0 0-.302-.254A1.5 1.5 0 0 0 13.99 3H2c-.325 0-.502.078-.602.145"/></svg>
+			System</button>
 		</div>
 	</div>
 </div>
@@ -160,39 +169,75 @@
 (function () {
 	chromeInit("navSettings");
 
-	/* --- Appearance: hue --- */
+	/* --- Appearance (Bankee): hue + theme click applies live (no reload) and persists;
+	   every page's boot block reads the same localStorage keys --- */
 	var savedHue = "blue";
 	try { savedHue = localStorage.getItem("vdoverdue.hue") || savedHue; } catch (e) {}
-	var hueDots = document.querySelectorAll(".hue-dot");
-	for (var i = 0; i < hueDots.length; i++) {
-		hueDots[i].setAttribute("aria-pressed", String(hueDots[i].getAttribute("data-hue") === savedHue));
-		hueDots[i].onclick = (function (hue) {
-			return function () {
-				localStorage.setItem("vdoverdue.hue", hue);
-				document.documentElement.setAttribute("data-hue", hue);
-				for (var j = 0; j < hueDots.length; j++) {
-					hueDots[j].setAttribute("aria-pressed", String(hueDots[j].getAttribute("data-hue") === hue));
-				}
-				// Reload to apply the hue to all tokens
-				location.reload();
-			};
-		})(hueDots[i].getAttribute("data-hue"));
-	}
-
-	/* --- Appearance: theme (persisted; every page's boot block reads it) --- */
 	var savedTheme = "dark";
 	try { savedTheme = localStorage.getItem("vdoverdue.theme") || savedTheme; } catch (e) {}
-	var swatches = document.querySelectorAll(".theme-swatch");
-	for (var k = 0; k < swatches.length; k++) {
-		if (swatches[k].getAttribute("data-theme") === savedTheme) {
-			swatches[k].classList.add("active");
+	var hueDots = document.querySelectorAll(".hue-dot");
+	var themeButtons = document.querySelectorAll(".theme-row .dl");
+
+	function markHue(hue) {
+		for (var i = 0; i < hueDots.length; i++) {
+			var on = hueDots[i].getAttribute("data-hue") === hue;
+			hueDots[i].classList.toggle("active", on);
+			hueDots[i].setAttribute("aria-pressed", String(on));
 		}
-		swatches[k].onclick = (function (theme) {
-			return function () {
-				localStorage.setItem("vdoverdue.theme", theme);
-				location.reload();
-			};
-		})(swatches[k].getAttribute("data-theme"));
+	}
+
+	function markTheme(theme) {
+		for (var j = 0; j < themeButtons.length; j++) {
+			themeButtons[j].classList.toggle("active", themeButtons[j].getAttribute("data-theme") === theme);
+		}
+	}
+
+	function selectHue(hue) {
+		try { localStorage.setItem("vdoverdue.hue", hue); } catch (e) {}
+		// blue = the default scope, so drop the attribute and let :root tokens apply
+		if (hue === "blue") {
+			document.documentElement.removeAttribute("data-hue");
+		} else {
+			document.documentElement.setAttribute("data-hue", hue);
+		}
+		markHue(hue);
+	}
+
+	function selectTheme(theme) {
+		try { localStorage.setItem("vdoverdue.theme", theme); } catch (e) {}
+		// mirror the boot block: stygian = darktheme + html.stygian, system = the OS preference
+		var doc = document.documentElement;
+		if (theme === "stygian") {
+			document.body.className = "darktheme";
+			doc.className = "stygian";
+		} else if (theme === "light") {
+			document.body.className = "lighttheme";
+			doc.className = "";
+		} else if (theme === "system") {
+			document.body.className = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+				? "lighttheme"
+				: "darktheme";
+			doc.className = "";
+		} else {
+			document.body.className = "darktheme";
+			doc.className = "";
+		}
+		markTheme(theme);
+	}
+
+	// the boot block already applied the saved values on load; mark the matching controls
+	markHue(savedHue);
+	markTheme(savedTheme);
+
+	for (var m = 0; m < hueDots.length; m++) {
+		hueDots[m].onclick = (function (dot) {
+			return function () { selectHue(dot.getAttribute("data-hue")); };
+		})(hueDots[m]);
+	}
+	for (var q = 0; q < themeButtons.length; q++) {
+		themeButtons[q].onclick = (function (btn) {
+			return function () { selectTheme(btn.getAttribute("data-theme")); };
+		})(themeButtons[q]);
 	}
 
 	/* --- Stream defaults: load --- */

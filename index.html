@@ -37,6 +37,19 @@
 	})();
 </script>
 
+<!-- Stock device plumbing: gotDevices() looks these up with raw
+     getElementById (throws if missing) and grabVideo() reads
+     #videoSourceSelect by default. They must NOT live inside #mainmenu:
+     stock code removes #mainmenu from the DOM as soon as the first viewer
+     connects (webrtc.js, "MAKING A NEW RPCS"), and an Apply re-grab after
+     that needs the selects to still exist. -->
+<div style="display:none">
+	<span id="multiselect-trigger"></span>
+	<select id="videoSourceSelect"></select>
+	<select id="audioSource"></select>
+	<select id="outputSource"></select>
+</div>
+
 <!-- Landing card -->
 <div id="mainmenu" class="card" style="margin-top:20px;">
 	<video id="previewWebcam" muted autoplay playsinline></video>
@@ -51,11 +64,6 @@
 	<form id="webcamquality" style="display:none">
 		<input type="radio" name="resolution" value="0" checked>
 	</form>
-	<!-- gotDevices() looks this up directly; the stock audio-device list UI -->
-	<span id="multiselect-trigger" style="display:none"></span>
-	<select id="videoSourceSelect" style="display:none"></select>
-	<select id="audioSource" style="display:none"></select>
-	<select id="outputSource" style="display:none"></select>
 </div>
 
 <!-- Live video tile -->
@@ -376,24 +384,49 @@
 
 	// Stock grabVideo reads #videoSourceSelect unguarded (its NDI label check,
 	// lib.js:41397): if device churn leaves its value matching no option, the
-	// re-grab throws a TypeError before getUserMedia and the preview stays
-	// black with no error and no retry. Guarantee a valid selection first.
+	// re-grab throws a TypeError before getUserMedia; if the element itself is
+	// gone or its list empty, the re-grab falls into the stock silent
+	// "no VIDEO" (ZZZ) branch instead. Either way the preview stays black
+	// with no error and no retry. Guarantee a valid selection first.
 	function grabPreviewWithValidSelect(quality, reenumerated) {
 		var vs = document.getElementById("videoSourceSelect");
-		if (vs && vs.options.length) {
+		if (!vs) {
+			// Defensive: the plumbing selects now live outside #mainmenu so they
+			// survive the first viewer connecting; recreate one if anything
+			// removed it anyway.
+			vs = document.createElement("select");
+			vs.id = "videoSourceSelect";
+			vs.style.display = "none";
+			document.body.appendChild(vs);
+		}
+		if (vs.options.length) {
 			if (!Array.prototype.some.call(vs.options, function (o) { return o.value === vs.value; })) {
 				vs.selectedIndex = 0; // stale device id — fall back to the default device
 			}
-		} else if (vs && !reenumerated) {
+		} else if (!reenumerated) {
 			// Device list vanished (device churn) — re-enumerate once, then re-grab.
 			enumerateDevices().then(function (d) {
 				gotDevices(d);
 				grabPreviewWithValidSelect(quality, true);
 			});
 			return;
-		} else if (vs) {
-			// Device list still empty after re-enumeration — stock no-video path.
-			vs.value = "ZZZ";
+		} else {
+			// Still empty after re-enumeration: keep the camera that is
+			// currently streaming, if we know it; else the stock no-video path.
+			var liveId = null;
+			try {
+				var liveTrack = session.streamSrc ? session.streamSrc.getVideoTracks()[0] : null;
+				if (liveTrack) { liveId = liveTrack.getSettings().deviceId; }
+			} catch (e) { }
+			if (liveId) {
+				var opt = document.createElement("option");
+				opt.value = liveId;
+				opt.text = "Camera";
+				vs.appendChild(opt);
+				vs.value = liveId;
+			} else {
+				vs.value = "ZZZ";
+			}
 		}
 		// Re-grab the preview with the new resolution/framerate (stock guards
 		// the first grab; device-change handlers always reset it first). The
@@ -417,6 +450,16 @@
 		var e2 = document.getElementById("mediaEncoderLine");
 		var l = document.getElementById("mediaLimitHint");
 		if (!t) return;
+		// Post-Go controls (Stop/Mute) and the public view link (#reshare, filled
+		// by stock updateReshareLink) carry inline display:none: stock would only
+		// un-hide the .hidden2 siblings when #mainmenu is removed, which for the
+		// webcam page means waiting for the first viewer. Reveal them here, keyed
+		// on seeding, so Stop is available the moment Go is hit.
+		var postGo = !!session.seeding || !document.getElementById("mainmenu");
+		var cb = document.getElementById("controlButtons");
+		if (cb) { cb.style.display = postGo ? "" : "none"; }
+		var rs = document.getElementById("reshare");
+		if (rs) { rs.style.display = postGo ? "" : "none"; }
 		t.textContent = (document.getElementById("mediaResSelect").value || "\u2014") + " \u00B7 " +
 			(session.maxframeRate || "\u2014") + " fps \u00B7 " + (session.outboundVideoBitrate || "\u2014") + " kbps";
 		// we are the seeder; peers (viewers) live in session.pcs
@@ -436,7 +479,7 @@
 	}, 1000);
 
 	// Stop + Mute
-	document.getElementById("hangupbutton").onclick = function () { session.hangup(); };
+	document.getElementById("hangupbutton").onclick = function () { session.hangup(true); };
 	document.getElementById("mutebutton").onclick = function () { toggleMute(); };
 })();
 </script>

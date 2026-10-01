@@ -352,6 +352,17 @@ label input, label select { margin-top: 6px; }
 	color: var(--muted);
 }
 
+/* Post-Go: public view link (stock fills #reshare) + Stop/Mute row */
+#reshare {
+	display: block;
+	margin: 0 auto 8px;
+	max-width: calc(var(--wrap) - 40px);
+	word-break: break-all;
+}
+#controlButtons {
+	text-align: center;
+	margin: 0 auto 20px;
+}
 
 /* --- Footer: attribution + legal --- */
 #appFooter {

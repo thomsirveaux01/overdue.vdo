@@ -371,12 +371,36 @@
 		localStorage.setItem("vdoverdue.webcam", JSON.stringify({
 			res: res, fps: session.maxframeRate, kbps: session.outboundVideoBitrate
 		}));
+		grabPreviewWithValidSelect(session.quality);
+	};
+
+	// Stock grabVideo reads #videoSourceSelect unguarded (its NDI label check,
+	// lib.js:41397): if device churn leaves its value matching no option, the
+	// re-grab throws a TypeError before getUserMedia and the preview stays
+	// black with no error and no retry. Guarantee a valid selection first.
+	function grabPreviewWithValidSelect(quality, reenumerated) {
+		var vs = document.getElementById("videoSourceSelect");
+		if (vs && vs.options.length) {
+			if (!Array.prototype.some.call(vs.options, function (o) { return o.value === vs.value; })) {
+				vs.selectedIndex = 0; // stale device id — fall back to the default device
+			}
+		} else if (vs && !reenumerated) {
+			// Device list vanished (device churn) — re-enumerate once, then re-grab.
+			enumerateDevices().then(function (d) {
+				gotDevices(d);
+				grabPreviewWithValidSelect(quality, true);
+			});
+			return;
+		} else if (vs) {
+			// Device list still empty after re-enumeration — stock no-video path.
+			vs.value = "ZZZ";
+		}
 		// Re-grab the preview with the new resolution/framerate (stock guards
 		// the first grab; device-change handlers always reset it first). The
 		// bitrate field is read live by the bandwidth estimator for peers.
 		activatedPreview = false;
-		grabVideo(session.quality);
-	};
+		grabVideo(quality);
+	}
 
 	// Start camera — stock flow: previewWebcam() requests permissions, runs
 	// setupWebcamSelection -> grabVideo for the live preview, and enables the

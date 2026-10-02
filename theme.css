@@ -1,6 +1,7 @@
 /* VDOverdue — shared design system.
    One file themes every page. Dark is the default; light via body:not(.darktheme).
-   Comma hsl() syntax for Chrome 80 parse safety. */
+   hsl() is mixed: comma syntax mostly, space-syntax in the Bankee-verbatim
+   settings section — both are fine on the Chrome 140 target. */
 
 /* --- Hue system (Bankee): --hue-base + --sat derive all color tokens.
    Dark: hue = base - 1. Light: hue = base + 1. Stygian: hue = base.
@@ -377,10 +378,10 @@ label input, label select { margin-top: 6px; }
 #appFooter a:hover { color: var(--acc-h); }
 
 /* --- Settings: appearance (Bankee Doodle, verbatim) ---
-   Floor is Chrome 84 (user decision 2026-09-30): flex gap and space-syntax
-   hsl() are Bankee's exact code, kept as-is. Only adaptation: his html.light
-   scope is body:not(.darktheme) here (our theme class lives on <body>);
-   app-specific selectors (cust-*, row-actions, modal-close) trimmed. */
+   Bankee's flex gap and space-syntax hsl() kept as-is (fine on the Chrome 140
+   target). Only adaptation: his html.light scope is body:not(.darktheme) here
+   (our theme class lives on <body>); app-specific selectors (cust-*, row-actions,
+   modal-close) trimmed. */
 /* settings page: label left, action right */
 .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
 /* Appearance (Settings page): each button PREVIEWS its theme with literal bg/text/border;

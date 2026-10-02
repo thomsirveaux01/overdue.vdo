@@ -1,6 +1,7 @@
 /* chrome.js — shared app chrome for VDOverdue.
    Builds the top bar, nav tabs, and footer. Every page calls chromeInit(tabId).
-   Chrome 80 compatible: no ?. / ?? / arrow / template literals. */
+   Written in stock style (var, string concat) to match lib.js; modern syntax
+   is fine in new code (Chrome 140 target, see AGENTS.md). */
 
 function chromeInit(activeTab) {
 	var body = document.body;

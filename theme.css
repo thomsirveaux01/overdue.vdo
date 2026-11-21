@@ -270,6 +270,17 @@ th { color: var(--muted); font-weight: 600; font-size: 13px; }
 }
 .card:last-child { margin-bottom: 0; }
 
+/* --- Components: two-pane card split (house panes) ---
+   Hairline-divided columns; min-width: 0 lets a long label wrap instead of
+   overflowing the grid track. split-32 = the 1/3 | 2/3 split (preview/intro
+   left, controls right). Stacks (divider becomes a top border) at 768px. */
+.panes { display: grid; grid-template-columns: 1fr 1fr; }
+.panes.split-32 { grid-template-columns: 1fr 2fr; }
+.panes.split-32 > .pane:last-child { align-self: center; }
+.pane { min-width: 0; }
+.pane + .pane { border-left: 1px solid var(--line);
+	margin-left: 20px; padding-left: 20px; }
+
 /* --- Components: button --- */
 .btn {
 	display: inline-block;
@@ -733,6 +744,10 @@ body.speedtest-page {
 
 /* --- Responsive: 768px (the house mobile breakpoint) --- */
 @media (max-width: 768px) {
+	/* the two-pane cards stack: the vertical divider becomes a horizontal one */
+	.panes, .panes.split-32 { grid-template-columns: 1fr; }
+	.pane + .pane { border-left: 0; margin-left: 0; padding-left: 0;
+		border-top: 1px solid var(--line); margin-top: 20px; padding-top: 20px; }
 	#appTopBar {
 		flex-direction: column;
 		align-items: center;

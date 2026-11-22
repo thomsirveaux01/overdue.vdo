@@ -50,7 +50,7 @@ Join the [Discord](https://discord.vdo.ninja) for community exhibitions, discuss
 * 🌃 [Alpha-version updated nightly](https://vdo.ninja/alpha)
 
 ## What's in this repo
-This repository contains the VDO.Ninja web frontend and sample apps using its IFRAME API. Production backend implementations and operational scripts belong in separate repositories. Optional TURN configuration and `.sample` files are included as self-hosting examples; the website does not execute them. TURN setup guidance is provided in [turnserver.md](turnserver.md). The user documentation for VDO.Ninja itself is found at docs.vdo.ninja.
+This repository contains a self-hosted VDO.Ninja web frontend reduced to four pages: `index.html` (webcam), `share.html` (screen share), `speedtest.html`, and `settings.html`. It is a fork of [steveseguin/vdo.ninja](https://github.com/steveseguin/vdo.ninja); the upstream sample apps, IFRAME API pages, and third-party feature libraries are not included. Production backend implementations and operational scripts belong in separate repositories. Optional TURN configuration and `.sample` files are included as self-hosting examples; the website does not execute them. TURN setup guidance is provided in [turnserver.md](turnserver.md). The user documentation for VDO.Ninja itself is found at docs.vdo.ninja.
 
 ## Hosting and local development
 
@@ -135,7 +135,7 @@ Please see: [Terms of Service](https://docs.vdo.ninja/help/privacy-and-security-
 Ideas, feedback, bugs, etc -- all welcomed.  I'm dumping many of my ideas as issues into Github. Feedback is typically most welcomed via Email or Discord.
 
 ## Licence
-See [LICENCE.md](LICENCE.md) for licensing and ownership details, [LICENSE](LICENSE) for the full core license, and [examples/LICENSE](examples/LICENSE) for the example-code license.
+See [LICENCE.md](LICENCE.md) for licensing and ownership details, and [LICENSE](LICENSE) for the full core license.
 
 ## Credit
 Thank you to everyone who has helped support this project so far. From the moderators, volunteers helping with support, those contributing media assets, the project sponsors, those reporting issues, those offering feedback, and any code submissions.

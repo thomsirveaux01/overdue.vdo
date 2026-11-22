@@ -13,10 +13,10 @@ This checkout is a public release repository. Primary development happens in a s
 
 ## Getting started
 
-- App entry points: `index.html`, `room.html`, and `meet.html`.
-- Setup and shared behavior: `main.js` and `lib.js`; connection core: `webrtc.js`.
-- Presentation: `main.css`, `images/`, `media/`, and `translations/`.
-- Integrations: `examples/` and the [IFRAME API guide](examples/iframeapi.md). Deployment: [README.md](README.md), [install.md](install.md), and [turnserver.md](turnserver.md).
+- App entry points: `index.html` (webcam), `share.html` (screen share), `speedtest.html`, and `settings.html`.
+- Shared behavior: `chrome.js`, `lib.js`, and the connection core `webrtc.js`. `main.js` is retained as a translation-key source for CI and is not loaded by the live pages.
+- Presentation: `theme.css`, `speedtest.css`, `lineawesome/`, `fonts/`, `media/` (favicons), and `translations/`.
+- Deployment: [README.md](README.md), [install.md](install.md), and [turnserver.md](turnserver.md).
 
 The frontend needs no build step or package installation. Serve it locally:
 

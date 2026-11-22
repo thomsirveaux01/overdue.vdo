@@ -110,7 +110,7 @@ Also note: There are third-party providers offering TURN services, if you would 
 
 A new deployment of VDO.Ninja should work without any changes to the index.html file, although you'll want to change it to support your own TURN server and perhaps branding. The VDO.Ninja code needs to be constantly kept up to date though; this is the reality of deploying VDO.Ninja -- you should update it every few months at the very least. As a result, keep this in mind when making changes to the VDO.Ninja source code, as heavy custom changes will make updating harder to do. The fewer the changes the better.
 
-For branding and presentation changes, start with images, translation files, `main.css`, and `index.html`. Keep custom changes focused so future updates are easier to merge. Test the affected pages after editing. For changes to shared application behavior, consider contributing a pull request so the fix can be maintained upstream.
+For branding and presentation changes, start with `theme.css`, `fonts/`, the favicons in `media/`, translation files, and `index.html`. Keep custom changes focused so future updates are easier to merge. Test the affected pages after editing. For changes to shared application behavior, consider contributing a pull request so the fix can be maintained upstream.
 
 ### Internet-free deployments 
 

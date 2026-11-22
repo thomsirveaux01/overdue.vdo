@@ -17,6 +17,9 @@ docs.md
 /.github/tests/
 /tests/
 
+# Local agent handoff (per-machine, never committed)
+HANDOFF.md
+
 # Local secrets and deployment state (not frontend assets)
 .env
 .env.*
